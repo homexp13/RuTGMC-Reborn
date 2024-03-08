@@ -91,6 +91,12 @@ Note that this means that snipers will have a slowdown of 3, due to the scope
 	return ..()
 
 
+/obj/item/weapon/gun/rifle/sniper/antimaterial/do_fire(obj/object_to_fire)
+	if(laser_target)
+		var/obj/projectile/projectile_to_fire = object_to_fire
+		projectile_to_fire.flags_projectile_behavior |= PROJECTILE_PRECISE_TARGET
+	return ..()
+
 /obj/item/weapon/gun/rifle/sniper/antimaterial/InterceptClickOn(mob/user, params, atom/object)
 	var/list/pa = params2list(params)
 	if(!pa.Find("ctrl"))
@@ -172,30 +178,24 @@ Note that this means that snipers will have a slowdown of 3, due to the scope
 	else
 		return TRUE
 
+/obj/item/weapon/gun/rifle/sniper/antimaterial/on_unzoom(mob/user)
+	. = ..()
+	if(!targetmarker_primed && !laser_target)
+		return
+	laser_off(user)
+
 /obj/item/weapon/gun/rifle/sniper/antimaterial/proc/activate_laser_target(atom/target, mob/living/user)
 	laser_target = target
 	to_chat(user, span_danger("You focus your target marker on [target]!"))
 	targetmarker_primed = FALSE
 	targetmarker_on = TRUE
-	RegisterSignal(src, COMSIG_PROJ_SCANTURF, PROC_REF(scan_turf_for_target))
 	START_PROCESSING(SSobj, src)
 	accuracy_mult += 0.50 //We get a big accuracy bonus vs the lasered target
 
 
 /obj/item/weapon/gun/rifle/sniper/antimaterial/proc/deactivate_laser_target()
-	UnregisterSignal(src, COMSIG_PROJ_SCANTURF)
 	laser_target.remove_laser()
 	laser_target = null
-
-
-/obj/item/weapon/gun/rifle/sniper/antimaterial/proc/scan_turf_for_target(datum/source, turf/target_turf)
-	SIGNAL_HANDLER
-	if(QDELETED(laser_target) || !isturf(laser_target.loc))
-		return NONE
-	if(get_turf(laser_target) == target_turf)
-		return COMPONENT_PROJ_SCANTURF_TARGETFOUND
-	return COMPONENT_PROJ_SCANTURF_TURFCLEAR
-
 
 /obj/item/weapon/gun/rifle/sniper/antimaterial/proc/laser_on(mob/user)
 	var/obj/item/attachable/scope = LAZYACCESS(attachments_by_slot, ATTACHMENT_SLOT_RAIL)
