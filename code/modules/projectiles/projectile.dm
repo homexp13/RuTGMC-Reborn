@@ -930,10 +930,7 @@ So if we are on the 32th absolute pixel coordinate we are on tile 1, but if we a
 		if(IgniteMob())
 			feedback_flags |= (BULLET_FEEDBACK_FIRE)
 
-	if(proj.sundering)
-		adjust_sunder(proj.sundering)
-
-	if((proj.ammo.flags_ammo_behavior & AMMO_SUNDERING) && proj.sundering >= 20) // RUTGMC EDIT
+	if((proj.sundering) && proj.sundering >= 20) // RUTGMC EDIT
 		adjust_sunder(proj.sundering) // RUTGMC EDIT
 
 
