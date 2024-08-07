@@ -4,6 +4,10 @@
 	selection_color = "#ffeeee"
 	exp_type_department = EXP_TYPE_MARINES
 
+/datum/job/terragov/squad/proc/spawn_by_squads(squad)
+	if(!(title in GLOB.start_squad_landmarks_list[squad]))
+		return pick(GLOB.start_squad_landmarks_list[squad][SQUAD_MARINE])
+	return pick(GLOB.start_squad_landmarks_list[squad][title])
 
 /datum/job/terragov/squad/after_spawn(mob/living/carbon/C, mob/M, latejoin = FALSE)
 	. = ..()
@@ -37,6 +41,7 @@ Make your way to the cafeteria for some post-cryosleep chow, and then get equipp
 		/datum/job/terragov/squad/engineer = SMARTIE_POINTS_REGULAR,
 		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
 		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
 	)
 	html_description = {"
 		<b>Difficulty</b>: Easy<br /><br />
@@ -81,6 +86,84 @@ What you lack alone, you gain standing shoulder to shoulder with the men and wom
 
 	id = /obj/item/card/id/dogtag
 
+//Squad Combat Robot
+/datum/job/terragov/squad/combat_robot
+	title = SQUAD_ROBOT
+	job_category = JOB_CAT_SILICON
+	paygrade = "E1"
+	comm_title = "Rob"
+	access = list(ACCESS_MARINE_ROBO)
+	minimal_access = list(ACCESS_MARINE_PREP, ACCESS_MARINE_DROPSHIP)
+	display_order = JOB_DISPLAY_ORDER_SQUAD_ROBO
+	outfit = /datum/outfit/job/marine/robo
+	total_positions = -1
+	job_flags = JOB_FLAG_SPECIALNAME|JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_PROVIDES_SQUAD_HUD|JOB_FLAG_CAN_SEE_ORDERS
+	jobworth = list(
+		/datum/job/xenomorph = LARVA_POINTS_REGULAR,
+		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
+		/datum/job/terragov/squad/corpsman = SMARTIE_POINTS_REGULAR,
+		/datum/job/terragov/squad/engineer = SMARTIE_POINTS_REGULAR,
+		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
+		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
+	)
+	html_description = {"
+		<b>Difficulty</b>: Easy<br /><br />
+		<b>You answer to the</b> acting Squad Leader<br /><br />
+		<b>Unlock Requirement</b>: Starting Role<br /><br />
+		<b>Gamemode Availability</b>: Crash, Nuclear War<br /><br /><br />
+		TerraGov’s Squad Marines make up the bread and butter of Terra's fighting forces. They are fitted with the standard arsenal that the TGMC offers, and they can take up a variety of roles, being a sniper, a pyrotechnician, a machinegunner, rifleman and more. They’re often high in numbers and divided into squads, but they’re the lowest ranking individuals, with a low degree of skill, not adapt to engineering or medical roles. Still, they are not limited to the arsenal they can take on the field to deal whatever threat that lurks against Terra.
+		<br /><br />
+		<b>Duty</b>: Carry out orders made by your acting Squad Leader, deal with any threats that oppose the TGMC.
+	"}
+	minimap_icon = "robo"
+
+/datum/job/terragov/squad/combat_robot/after_spawn(mob/living/carbon/new_mob, mob/user, latejoin = FALSE)
+	. = ..()
+	if(!ishuman(new_mob))
+		return
+	var/mob/living/carbon/human/new_human = new_mob
+	var/playtime_mins = user?.client?.get_exp(title)
+	if(!playtime_mins || playtime_mins < 1 )
+		return
+	switch(playtime_mins)
+		if(0 to 600) // starting
+			new_human.wear_id.paygrade = "E1"
+		if(601 to 6000) // 10hrs
+			new_human.wear_id.paygrade = "E2"
+		if(6001 to 18000) // 100 hrs
+			new_human.wear_id.paygrade = "E3"
+		if(18001 to 60000) // 300 hrs
+			new_human.wear_id.paygrade = "E3E"
+		if(60001 to INFINITY) // 1000 hrs
+			new_human.wear_id.paygrade = "E8" //If you play way too much TGMC. 1000 hours.
+
+/datum/job/terragov/squad/combat_robot/get_special_name(client/preference_source)
+	return preference_source.prefs.synthetic_name
+
+/datum/job/terragov/squad/combat_robot/return_spawn_type(datum/preferences/prefs)
+	switch(prefs?.robot_type)
+		if("Hammerhead")
+			return /mob/living/carbon/human/species/robot/alpharii
+		if("Chilvaris")
+			return /mob/living/carbon/human/species/robot/charlit
+		if("Ratcher")
+			return /mob/living/carbon/human/species/robot/deltad
+		if("Sterling")
+			return /mob/living/carbon/human/species/robot/bravada
+	return /mob/living/carbon/human/species/robot
+
+/datum/job/terragov/squad/combat_robot/radio_help_message(mob/M)
+	. = ..()
+	to_chat(M, {"\nYou are a rank-and-file marine of the TGMC, and that is your strength.
+What you lack alone, you gain standing shoulder to shoulder with the men and women of the TerraGov Marine Corps. Ooh-rah!"})
+
+/datum/outfit/job/marine/robo
+	name = SQUAD_ENGINEER
+	jobtype = /datum/job/terragov/squad/combat_robot
+
+	id = /obj/item/card/id/dogtag/robo
+
 //Squad Engineer
 /datum/job/terragov/squad/engineer
 	title = SQUAD_ENGINEER
@@ -90,6 +173,10 @@ What you lack alone, you gain standing shoulder to shoulder with the men and wom
 	access = list(ACCESS_MARINE_PREP, ACCESS_MARINE_ENGPREP, ACCESS_CIVILIAN_ENGINEERING, ACCESS_MARINE_REMOTEBUILD, ACCESS_MARINE_ENGINEERING)
 	minimal_access = list(ACCESS_MARINE_PREP, ACCESS_MARINE_ENGPREP, ACCESS_CIVILIAN_ENGINEERING, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_REMOTEBUILD, ACCESS_MARINE_ENGINEERING)
 	skills_type = /datum/skills/combat_engineer
+
+	exp_type = EXP_TYPE_MARINES
+	exp_requirements = XP_REQ_UNSEASONED
+
 	display_order = JOB_DISPLAY_ORDER_SUQAD_ENGINEER
 	outfit = /datum/outfit/job/marine/engineer
 	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_PROVIDES_SQUAD_HUD|JOB_FLAG_CAN_SEE_ORDERS
@@ -99,6 +186,7 @@ What you lack alone, you gain standing shoulder to shoulder with the men and wom
 		/datum/job/terragov/squad/corpsman = SMARTIE_POINTS_REGULAR,
 		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
 		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
 	)
 	job_points_needed = 5
 	html_description = {"
@@ -151,12 +239,17 @@ Your squaddies will look to you when it comes to construction in the field of ba
 	access = list(ACCESS_MARINE_PREP, ACCESS_MARINE_MEDPREP, ACCESS_MARINE_MEDBAY, ACCESS_MARINE_CHEMISTRY)
 	minimal_access = list(ACCESS_MARINE_PREP, ACCESS_MARINE_MEDPREP, ACCESS_MARINE_MEDBAY, ACCESS_MARINE_CHEMISTRY, ACCESS_MARINE_DROPSHIP)
 	skills_type = /datum/skills/combat_medic
+
+	exp_type = EXP_TYPE_MEDICAL
+	exp_requirements = XP_REQ_UNSEASONED
+
 	display_order = JOB_DISPLAY_ORDER_SQUAD_CORPSMAN
 	outfit = /datum/outfit/job/marine/corpsman
 	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_PROVIDES_SQUAD_HUD|JOB_FLAG_CAN_SEE_ORDERS
 	jobworth = list(
 		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
 		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
 		/datum/job/xenomorph = LARVA_POINTS_REGULAR,
 		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_MEDIUM,
 		/datum/job/terragov/squad/engineer = SMARTIE_POINTS_REGULAR,
@@ -211,6 +304,10 @@ You may not be a fully-fledged doctor, but you stand between life and death when
 	access = list(ACCESS_MARINE_PREP, ACCESS_MARINE_SMARTPREP)
 	minimal_access = list(ACCESS_MARINE_PREP, ACCESS_MARINE_SMARTPREP, ACCESS_MARINE_DROPSHIP)
 	skills_type = /datum/skills/smartgunner
+
+	exp_type = EXP_TYPE_MARINES
+	exp_requirements = XP_REQ_UNSEASONED
+
 	display_order = JOB_DISPLAY_ORDER_SQUAD_SMARTGUNNER
 	outfit = /datum/outfit/job/marine/smartgunner
 	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_PROVIDES_SQUAD_HUD|JOB_FLAG_CAN_SEE_ORDERS
@@ -301,9 +398,13 @@ You can serve a variety of roles, so choose carefully."})
 	comm_title = JOB_COMM_TITLE_SQUAD_LEADER
 	total_positions = 4
 	supervisors = "the acting field commander"
-	access = list(ACCESS_MARINE_PREP, ACCESS_MARINE_LEADER, ACCESS_MARINE_DROPSHIP)
-	minimal_access = list(ACCESS_MARINE_PREP, ACCESS_MARINE_LEADER, ACCESS_MARINE_DROPSHIP)
+	access = list(ACCESS_MARINE_PREP, ACCESS_MARINE_LEADER, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_TADPOLE)
+	minimal_access = list(ACCESS_MARINE_PREP, ACCESS_MARINE_LEADER, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_TADPOLE)
 	skills_type = /datum/skills/sl
+
+	exp_type = EXP_TYPE_MARINES
+	exp_requirements = XP_REQ_INTERMEDIATE
+
 	display_order = JOB_DISPLAY_ORDER_SQUAD_LEADER
 	outfit = /datum/outfit/job/marine/leader
 	exp_requirements = XP_REQ_INTERMEDIATE
@@ -316,6 +417,7 @@ You can serve a variety of roles, so choose carefully."})
 		/datum/job/terragov/squad/engineer = SMARTIE_POINTS_REGULAR,
 		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
 		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
 	)
 	html_description = {"
 		<b>Difficulty</b>: Hard<br /><br />
@@ -379,6 +481,7 @@ You are also in charge of communicating with command and letting them know about
 		/datum/job/xenomorph = LARVA_POINTS_REGULAR,
 		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
 		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
 	)
 	minimap_icon = "private"
 

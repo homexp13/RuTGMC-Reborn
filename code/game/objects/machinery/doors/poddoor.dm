@@ -48,7 +48,8 @@
 /obj/machinery/door/poddoor/try_to_activate_door(mob/user)
 	return
 
-/obj/machinery/door/poddoor/update_icon()
+/obj/machinery/door/poddoor/update_icon_state()
+	. = ..()
 	if(density)
 		icon_state = "pdoor1"
 	else
@@ -274,6 +275,9 @@
 	. = ..()
 	var/area/ourarea = get_area(src)
 	DISABLE_BITFIELD(ourarea.flags_area, DISALLOW_WEEDING)
+
+/obj/machinery/door/poddoor/timed_late/containment/landing_zone/get_explosion_resistance()
+	return density ? 5000 : 0
 
 /obj/machinery/door/poddoor/timed_late/containment/landing_zone
 	id = "landing_zone"

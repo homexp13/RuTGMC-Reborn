@@ -88,6 +88,8 @@ REAGENT SCANNER
 	///Distance the current_user can be away from the patient and still get health data.
 	var/track_distance = 3
 
+	var/alien = FALSE
+
 /obj/item/healthanalyzer/attack(mob/living/carbon/M, mob/living/user)
 	. = ..()
 	analyze_vitals(M, user)
@@ -95,6 +97,10 @@ REAGENT SCANNER
 /obj/item/healthanalyzer/attack_alternate(mob/living/carbon/M, mob/living/user)
 	. = ..()
 	analyze_vitals(M, user, TRUE)
+
+/obj/item/healthanalyzer/attack_self(mob/user)
+	. = ..()
+	attack(user, user)
 
 ///Health scans a target. M is the thing being scanned, user is the person doing the scanning, show_patient will show the UI to the scanee when TRUE.
 /obj/item/healthanalyzer/proc/analyze_vitals(mob/living/carbon/M, mob/living/user, show_patient)
@@ -109,11 +115,9 @@ REAGENT SCANNER
 	if(isxeno(M))
 		balloon_alert(user, "Unknown entity")
 		return
-//RU TGMC EDIT
 	if(HAS_TRAIT(M, TRAIT_FOREIGN_BIO) && !alien)
 		balloon_alert(user, "Unknown biology")
 		return
-//RU TGMC EDIT
 	if(M.species.species_flags & NO_SCAN)
 		balloon_alert(user, "Not Organic")
 		return
@@ -275,6 +279,14 @@ REAGENT SCANNER
 			data["ssd"] = "SSD detected." // SSD
 
 	return data
+
+/obj/item/healthanalyzer/alien
+	name = "\improper YMX scanner"
+	icon = 'icons/obj/hunter/pred_gear.dmi'
+	icon_state = "scanner"
+	item_state = "analyzer"
+	desc = "An alien design hand-held body scanner able to distinguish vital signs of the subject. The front panel is able to provide the basic readout of the subject's status."
+	alien = TRUE
 
 /obj/item/healthanalyzer/integrated
 	name = "\improper HF2 integrated health analyzer"

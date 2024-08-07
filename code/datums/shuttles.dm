@@ -106,12 +106,14 @@
 
 // Shuttles start here:
 /datum/map_template/shuttle/dropship_one
-	shuttle_id = SHUTTLE_ALAMO
-	name = "Alamo"
-
-/datum/map_template/shuttle/dropship_two
+	prefix = "_maps/shuttles/"
 	shuttle_id = SHUTTLE_NORMANDY
 	name = "Normandy"
+
+/datum/map_template/shuttle/dropship_two
+	prefix = "_maps/shuttles/"
+	shuttle_id = SHUTTLE_ALAMO
+	name = "Alamo"
 
 /datum/map_template/shuttle/cas
 	shuttle_id = SHUTTLE_CAS
@@ -174,7 +176,7 @@
 	shuttle_id = SHUTTLE_DISTRESS_UPP
 	name = "Distress UPP"
 
-/datum/map_template/shuttle/small_ert/ufo 
+/datum/map_template/shuttle/small_ert/ufo
 	shuttle_id = SHUTTLE_DISTRESS_UFO
 	name = "Small UFO"
 
@@ -185,6 +187,10 @@
 /datum/map_template/shuttle/supply
 	shuttle_id = SHUTTLE_SUPPLY
 	name = SHUTTLE_SUPPLY
+
+/datum/map_template/shuttle/supply/vehicle
+	shuttle_id = SHUTTLE_VEHICLE_SUPPLY
+	name = SHUTTLE_VEHICLE_SUPPLY
 
 /datum/map_template/shuttle/tgs_canterbury
 	shuttle_id = SHUTTLE_CANTERBURY

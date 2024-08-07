@@ -8,6 +8,7 @@
 	icon_off = "fridge1"
 
 /obj/structure/closet/secure_closet/freezer/update_icon_state()
+	. = ..()
 	if(broken)
 		icon_state = icon_broken
 		return
@@ -57,3 +58,19 @@
 		new /obj/item/spacecash/c200(src)
 	for(var/i in 1 to 6)
 		new /obj/item/spacecash/c100(src)
+
+/obj/structure/closet/secure_closet/freezer/kitchen/yautja
+	req_access = null
+	locked = FALSE
+	icon = 'icons/obj/machines/yautja_machines.dmi'
+	icon_state = "freezer"
+
+/obj/structure/closet/secure_closet/freezer/fridge/yautja
+	locked = FALSE
+	icon = 'icons/obj/machines/yautja_machines.dmi'
+	icon_state = "fridge"
+
+/obj/structure/closet/secure_closet/freezer/meat/yautja
+	locked = FALSE
+	icon = 'icons/obj/machines/yautja_machines.dmi'
+	icon_state = "fridge"

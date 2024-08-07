@@ -1,6 +1,6 @@
 
 /mob/living/carbon/xenomorph/proc/death_cry()
-	playsound(loc, prob(50) ? 'sound/voice/alien_death.ogg' : 'sound/voice/alien_death2.ogg', 25, 1)
+	playsound(loc, prob(50) ? 'sound/voice/alien/death.ogg' : 'sound/voice/alien/death2.ogg', 25, 1)
 
 
 /mob/living/carbon/xenomorph/death(gibbing, deathmessage = "lets out a waning guttural screech, green blood bubbling from its maw.", silent)
@@ -35,7 +35,10 @@
 		if(hud_used.staminas)
 			hud_used.staminas.icon_state = "staminaloss200"
 		if(hud_used.alien_plasma_display)
-			hud_used.alien_plasma_display.icon_state = "power_display_empty"
+			hud_used.alien_plasma_display.icon_state = "power_display_0"
+		if(hud_used.alien_evolve_display)
+			hud_used.alien_evolve_display.icon_state = "evolve0"
+
 	update_icons()
 
 	death_cry()

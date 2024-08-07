@@ -109,7 +109,7 @@
 	maxHealth = xeno_caste.max_health * GLOB.xeno_stat_multiplicator_buff
 	if(restore_health_and_plasma)
 		// xenos that manage plasma through special means shouldn't gain it for free on aging
-		plasma_stored = max(plasma_stored, xeno_caste.plasma_max * xeno_caste.plasma_regen_limit)
+		set_plasma(max(plasma_stored, xeno_caste.plasma_max * xeno_caste.plasma_regen_limit))
 		health = maxHealth
 	setXenoCasteSpeed(xeno_caste.speed)
 
@@ -155,22 +155,21 @@
 	var/playtime_mins = client?.get_exp(xeno_caste.caste_name)
 	var/rank_name
 	switch(playtime_mins)
-		if(0 to 600)
-			rank_name = "Hatchling"
-		if(601 to 1500) //10 hours
+		if(0 to 300)
 			rank_name = "Young"
-		if(1501 to 4200) //25 hours
+		if(301 to 1500)
 			rank_name = "Mature"
-		if(4201 to 10500) //70 hours
+		if(1501 to 4200)
 			rank_name = "Elder"
-		if(10501 to INFINITY) //175 hours
+		if(4201 to 9000)
 			rank_name = "Ancient"
+		if(9001 to INFINITY)
+			rank_name = "Prime"
 		else
-			rank_name = "Hatchling"
+			rank_name = "Young"
 	var/prefix = (hive.prefix || xeno_caste.upgrade_name) ? "[hive.prefix][xeno_caste.upgrade_name] " : ""
 	name = prefix + "[rank_name ? "[rank_name] " : ""][xeno_caste.display_name] ([nicknumber])"
 
-	//Update linked data so they show up properly
 	real_name = name
 	if(mind)
 		mind.name = name
@@ -184,24 +183,21 @@
 		if(XENO_UPGRADE_PRIMO)
 			return 1
 
-/* MOVED TO MODULE
-///Returns the playtime as a number, used for rank icons
 /mob/living/carbon/xenomorph/proc/playtime_as_number()
 	var/playtime_mins = client?.get_exp(xeno_caste.caste_name)
 	switch(playtime_mins)
-		if(0 to 600)
+		if(0 to 300)
 			return 0
-		if(601 to 1500)
+		if(301 to 1500)
 			return 1
 		if(1501 to 4200)
 			return 2
-		if(4201 to 10500)
+		if(4201 to 9000)
 			return 3
-		if(10501 to INFINITY)
+		if(9001 to INFINITY)
 			return 4
 		else
 			return 0
-*/
 
 /mob/living/carbon/xenomorph/proc/upgrade_next()
 	switch(upgrade)
@@ -292,7 +288,6 @@
 /mob/living/carbon/xenomorph/slip(slip_source_name, stun_level, weaken_level, run_only, override_noslip, slide_steps)
 	return FALSE
 
-/* RUTGMC DELETION, DRAG SLOWDOWN FIX
 /mob/living/carbon/xenomorph/start_pulling(atom/movable/AM, force = move_force, suppress_message = TRUE, bypass_crit_delay = FALSE)
 	if(do_actions)
 		return FALSE //We are already occupied with something.
@@ -309,13 +304,12 @@
 		return FALSE //to stop xeno from pulling marines on roller beds.
 	if(ishuman(L))
 		if(L.stat == DEAD) //Can't drag dead human bodies.
-			to_chat(usr,span_xenowarning("This looks gross, better not touch it."))
+			to_chat(usr, span_xenowarning("This looks gross, better not touch it."))
 			return FALSE
-		pull_speed += XENO_DEADHUMAN_DRAG_SLOWDOWN
-	do_attack_animation(L, ATTACK_EFFECT_GRAB)
+		if(L != pulling)
+			pull_speed += XENO_DEADHUMAN_DRAG_SLOWDOWN
 	SEND_SIGNAL(src, COMSIG_XENOMORPH_GRAB)
 	return ..()
-*/
 
 /mob/living/carbon/xenomorph/stop_pulling()
 	if(ishuman(pulling))
@@ -421,8 +415,15 @@
 	handle_weeds_on_movement()
 	return ..()
 
+/mob/living/carbon/xenomorph/Move(NewLoc, direct, glide_size_override)
+	. = ..()
+	if(!.)
+		return
+	if(interactee)// moving stops any kind of interaction
+		unset_interaction()
+
 /mob/living/carbon/xenomorph/CanAllowThrough(atom/movable/mover, turf/target)
-	if(mover.pass_flags & PASS_XENO) // RUTGMC ADDITION
+	if(mover.pass_flags & PASS_XENO)
 		return TRUE
 	if(mover.throwing && ismob(mover) && isxeno(mover.thrower)) //xenos can throw mobs past other xenos
 		return TRUE
@@ -471,13 +472,29 @@ Returns TRUE when loc_weeds_type changes. Returns FALSE when it doesn’t change
 		return
 	update_icon()
 
-/mob/living/carbon/xenomorph/lay_down()
+/mob/living/carbon/xenomorph/toggle_resting()
 	var/datum/action/ability/xeno_action/xeno_resting/resting_action = actions_by_path[/datum/action/ability/xeno_action/xeno_resting]
 	if(!resting_action || !resting_action.can_use_action())
 		return
+
+	if(resting)
+		if(!COOLDOWN_CHECK(src, xeno_resting_cooldown))
+			balloon_alert(src, "Too soon!")
+			return
+
+	if(!COOLDOWN_CHECK(src, xeno_unresting_cooldown))
+		balloon_alert(src, "Wait a bit!")
+		return
 	return ..()
 
-/mob/living/carbon/xenomorph/set_jump_component(duration = 0.5 SECONDS, cooldown = 2 SECONDS, cost = 0, height = 16, sound = null, flags = JUMP_SHADOW, flags_pass = PASS_LOW_STRUCTURE|PASS_FIRE)
+/mob/living/carbon/xenomorph/set_resting()
+	. = ..()
+	if(resting)
+		COOLDOWN_START(src, xeno_resting_cooldown, XENO_RESTING_COOLDOWN)
+	else
+		COOLDOWN_START(src, xeno_unresting_cooldown, XENO_UNRESTING_COOLDOWN)
+
+/mob/living/carbon/xenomorph/set_jump_component(duration = 0.5 SECONDS, cooldown = 2 SECONDS, cost = 0, height = 16, sound = null, flags = JUMP_SHADOW, flags_pass = PASS_LOW_STRUCTURE|PASS_FIRE|PASS_TANK)
 	var/gravity = get_gravity()
 	if(gravity < 1) //low grav
 		duration *= 2.5 - gravity
@@ -491,3 +508,7 @@ Returns TRUE when loc_weeds_type changes. Returns FALSE when it doesn’t change
 		height *= gravity * 0.5
 
 	AddComponent(/datum/component/jump, _jump_duration = duration, _jump_cooldown = cooldown, _stamina_cost = 0, _jump_height = height, _jump_sound = sound, _jump_flags = flags, _jumper_allow_pass_flags = flags_pass)
+
+/mob/living/carbon/xenomorph/send_speech(message_raw, message_range = 7, obj/source = src, bubble_type = bubble_icon, list/spans, datum/language/message_language=null, message_mode, tts_message, list/tts_filter)
+	. = ..()
+	playsound(loc, talk_sound, 25, 1)

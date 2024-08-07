@@ -59,6 +59,7 @@
 #define issectoid(H) (is_species(H, /datum/species/sectoid))
 #define ishumanbasic(H) (is_species(H, /datum/species/human))
 #define iszombie(H) (is_species(H, /datum/species/zombie))
+#define isnecoarc(H) (is_species(H, /datum/species/necoarc))
 
 //Monkey species and subtypes
 #define ismonkey(H) (is_species(H, /datum/species/monkey))
@@ -110,11 +111,11 @@
 #define isxenodefiler(A) (istype(A, /mob/living/carbon/xenomorph/defiler))
 #define isxenobull(A) (istype(A, /mob/living/carbon/xenomorph/bull))
 #define isxenohivemind(A) (istype(A, /mob/living/carbon/xenomorph/hivemind))
-#define isxenowraith(A) (istype(A, /mob/living/carbon/xenomorph/wraith))
-//#define isxenowidow(A) (istype(A, /mob/living/carbon/xenomorph/widow)) //RUTGMC DELETION, WIDOW DELETION
 #define isxenowarlock(A) (istype(A, /mob/living/carbon/xenomorph/warlock))
 #define isxenoking(A) (istype(A, /mob/living/carbon/xenomorph/king))
 #define isxenobehemoth(A) (istype(A, /mob/living/carbon/xenomorph/behemoth))
+#define isxenopanther(A) (istype(A, /mob/living/carbon/xenomorph/panther))
+#define isxenofacehugger(A) (istype(A, /mob/living/carbon/xenomorph/facehugger))
 
 //Silicon mobs
 #define issilicon(A) (istype(A, /mob/living/silicon))
@@ -240,6 +241,10 @@
 
 #define ismecha(A) (istype(A, /obj/vehicle/sealed/mecha))
 
+#define isarmoredvehicle(A) (istype(A, /obj/vehicle/sealed/armored))
+
+#define ishitbox(A) (istype(A, /obj/hitbox))
+
 #define isorgan(A) (istype(A, /datum/limb))
 
 #define isidcard(A) (istype(A, /obj/item/card/id))
@@ -279,6 +284,7 @@
 #define iscombatpatrolgamemode(O) (istype(O, /datum/game_mode/hvh/combat_patrol))
 #define issensorcapturegamemode(O) (istype(O, /datum/game_mode/hvh/combat_patrol/sensor_capture))
 #define iscampaigngamemode(O) (istype(O, /datum/game_mode/hvh/campaign))
+#define isdistressgamemode(O) (istype(O, /datum/game_mode/infestation/distress))
 
 #define isxenoresearcharea(A) (istype(A, /area/mainship/medical/medical_science))
 
@@ -294,9 +300,7 @@
 
 // Xeno hives
 #define isnormalhive(hive) (istype(hive, /datum/hive_status/normal))
-/* RU TGMC EDIT
-#define isxenohive(A) ((A == XENO_HIVE_NONE) || (A == XENO_HIVE_NORMAL) || (A == XENO_HIVE_CORRUPTED) || (A == XENO_HIVE_ALPHA) || (A == XENO_HIVE_BETA) || (A == XENO_HIVE_ZETA) || (A == XENO_HIVE_ADMEME)) || (A == XENO_HIVE_FALLEN)
-RU TGMC EDIT*/
+#define isxenohive(A) ((A == XENO_HIVE_NONE) || (A == XENO_HIVE_NORMAL) || (A == XENO_HIVE_CORRUPTED) || (A == XENO_HIVE_ALPHA) || (A == XENO_HIVE_BETA) || (A == XENO_HIVE_ZETA) || (A == XENO_HIVE_ADMEME)) || (A == XENO_HIVE_FALLEN) || (A == XENO_HIVE_FORSAKEN) || (A == XENO_HIVE_YAUTJA)
 // Slot helpers
 #define ishandslot(A) ((A == SLOT_L_HAND) || (A == SLOT_R_HAND))
 
@@ -304,3 +308,15 @@ RU TGMC EDIT*/
 #define ismaroonobjective(O) (istype(O, /datum/objective/maroon))
 #define isstealobjective(O) (istype(O, /datum/objective/steal))
 #define isassassinateobjective(O) (istype(O, /datum/objective/assassinate))
+
+#define isresearcher(A) (ishuman(A) && A.job.title == "Medical Researcher")
+#define isyautja(H) (is_species(H, /datum/species/yautja))
+
+#define ispredatorjob(J) (istype(J, /datum/job/predator))
+
+#define ispredalien(A) (istype(A, /mob/living/carbon/xenomorph/predalien))
+#define isxenopredalienlarva(A) (istype(A, /mob/living/carbon/xenomorph/larva/predalien))
+#define isxenohellhound(A) (istype(A, /mob/living/carbon/xenomorph/hellhound))
+
+//Objects
+#define iscontainmentshutter(A) (istype(A, /obj/machinery/door/poddoor/timed_late/containment/landing_zone))

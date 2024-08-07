@@ -49,6 +49,7 @@
 
 /obj/structure/window_frame/update_icon()
 	QUEUE_SMOOTH(src)
+	return ..()
 
 /obj/structure/window_frame/Destroy()
 	density = FALSE
@@ -116,6 +117,13 @@
 	basestate = "ship_window_frame"
 	base_icon_state = "ship_window_frame"
 
+/obj/structure/window_frame/mainship/alt
+	window_type = /obj/structure/window/framed/mainship/alt
+	icon = 'icons/obj/smooth_objects/alt_ship_window_frame.dmi'
+	icon_state = "alt_ship_window_frame-0"
+	basestate = "alt_ship_window_frame"
+	base_icon_state = "alt_ship_window_frame"
+
 /obj/structure/window_frame/mainship/white
 	icon = 'icons/obj/smooth_objects/white_window_frame.dmi'
 	icon_state = "white_window_frame-0"
@@ -124,7 +132,7 @@
 	window_type = /obj/structure/window/framed/mainship/white
 
 /obj/structure/window_frame/mainship/gray
-	icon = 'icons/obj/smooth_objects/gray_window_frame.dmi'
+	icon = 'icons/obj/smooth_objects/ship_gray_window_frame.dmi'
 	icon_state = "gray_window_frame-0"
 	basestate = "gray_window_frame"
 	base_icon_state = "gray_window_frame"

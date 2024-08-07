@@ -5,9 +5,9 @@
 /datum/action/ability/activable/xeno/nightfall
 	name = "Nightfall"
 	action_icon_state = "nightfall"
-	desc = "Shut down all electrical lights nearby for 10 seconds."
+	desc = "Shut down electrical lights for 10 seconds and extinguish flares in nearby range."
 	cooldown_duration = 45 SECONDS
-	ability_cost = 100
+	ability_cost = 150
 	keybinding_signals = list(
 		KEYBINDING_NORMAL = COMSIG_XENOABILITY_NIGHTFALL,
 	)
@@ -28,7 +28,10 @@
 		if(isnull(light.loc) || (owner.loc.z != light.loc.z) || (get_dist(owner, light) >= range))
 			continue
 		light.turn_light(null, FALSE, duration, TRUE, TRUE, TRUE)
-
+	for(var/obj/item/explosive/grenade/flare/flare in range(range, owner))
+		if(!flare.active)
+			continue
+		flare.turn_off()
 
 // ***************************************
 // *********** Petrify
@@ -47,7 +50,6 @@
 		KEYBINDING_NORMAL = COMSIG_XENOABILITY_PETRIFY,
 	)
 
-/* TGMC Delete Begin
 /datum/action/ability/xeno_action/petrify/action_activate()
 	var/obj/effect/overlay/eye/eye = new
 	owner.vis_contents += eye
@@ -74,6 +76,7 @@
 		human.status_flags |= GODMODE
 		ADD_TRAIT(human, TRAIT_HANDS_BLOCKED, REF(src))
 		human.move_resist = MOVE_FORCE_OVERPOWERING
+		human.unset_interaction()
 		human.add_atom_colour(COLOR_GRAY, TEMPORARY_COLOUR_PRIORITY)
 		human.log_message("has been petrified by [owner] for [PETRIFY_DURATION] ticks", LOG_ATTACK, color="pink")
 
@@ -99,7 +102,6 @@
 	addtimer(CALLBACK(src, PROC_REF(end_effects), humans), PETRIFY_DURATION)
 	add_cooldown()
 	succeed_activate()
-	TGMC DELETE END*/
 
 ///cleans up when the charge up is finished or interrupted
 /datum/action/ability/xeno_action/petrify/proc/finish_charging()
@@ -164,8 +166,9 @@
 
 /datum/action/ability/activable/xeno/off_guard/use_ability(atom/target)
 	var/mob/living/carbon/human/human_target = target
-	human_target.apply_status_effect(STATUS_EFFECT_GUN_SKILL_SCATTER_DEBUFF, 100)
-	human_target.apply_status_effect(STATUS_EFFECT_CONFUSED, 40)
+	human_target.apply_status_effect(STATUS_EFFECT_GUN_SKILL_ACCURACY_DEBUFF, 8 SECONDS)
+	human_target.apply_status_effect(STATUS_EFFECT_GUN_SKILL_SCATTER_DEBUFF, 8 SECONDS)
+	human_target.apply_status_effect(/datum/status_effect/incapacitating/offguard_slowdown, 8 SECONDS)
 	human_target.log_message("has been off-guarded by [owner]", LOG_ATTACK, color="pink")
 	human_target.balloon_alert_to_viewers("confused")
 	playsound(human_target, 'sound/effects/off_guard_ability.ogg', 50)
@@ -201,7 +204,7 @@
 		return
 	owner.dir = get_cardinal_dir(owner, target)
 
-	playsound(owner, 'sound/voice/ed209_20sec.ogg', 70, sound_range = 20)
+	playsound(owner, 'sound/voice/alien/king_roar.ogg', 70, sound_range = 20)
 	var/mob/living/carbon/xenomorph/king/king_owner = owner
 	if(istype(king_owner))
 		king_owner.icon_state = "King Screeching"
@@ -215,7 +218,7 @@
 		return fail_activate()
 
 	finish_charging()
-	playsound(owner, 'sound/voice/xenos_roaring.ogg', 90, sound_range = 30)
+	playsound(owner, 'sound/voice/alien/xenos_roaring.ogg', 90, sound_range = 30)
 	for(var/mob/living/carbon/human/human_victim AS in GLOB.humans_by_zlevel["[owner.z]"])
 		if(get_dist(human_victim, owner) > 9)
 			continue
@@ -260,9 +263,9 @@
 			shake_camera(carbon_victim, 3 * severity, 3 * severity)
 			carbon_victim.apply_effect(1 SECONDS, WEAKEN)
 			to_chat(carbon_victim, "You are smashed to the ground!")
-		else if(ismecha(victim))
-			var/obj/vehicle/sealed/mecha/mecha_victim = victim
-			mecha_victim.take_damage(SHATTERING_ROAR_DAMAGE * 5 * severity, BRUTE, MELEE)
+		else if(isvehicle(victim))
+			var/obj/vehicle/veh_victim = victim
+			veh_victim.take_damage(SHATTERING_ROAR_DAMAGE * 5 * severity, BRUTE, MELEE)
 		else if(istype(victim, /obj/structure/window))
 			var/obj/structure/window/window_victim = victim
 			if(window_victim.damageable)
@@ -296,7 +299,7 @@
 /datum/action/ability/xeno_action/zero_form_beam
 	name = "Zero-Form Energy Beam"
 	action_icon_state = "zero_form_beam"
-	desc = "After a windup, concentrates the hives energy into a forward-facing beam that pierces everything, but only hurts living beings."
+	desc = "After a windup, concentrates the hives energy into a forward-facing beam that pierces everything, hurting living beings and vehicles."
 	ability_cost = 25
 	cooldown_duration = 10 SECONDS
 	keybind_flags = ABILITY_KEYBIND_USE_ABILITY
@@ -398,9 +401,12 @@
 				human_victim.take_overall_damage(15, BURN, updating_health = TRUE)
 				human_victim.flash_weak_pain()
 				animation_flash_color(human_victim)
-			else if(ismecha(victim))
-				var/obj/vehicle/sealed/mecha/mech_victim = victim
-				mech_victim.take_damage(75, BURN, ENERGY, armour_penetration = 60)
+			else if(isvehicle(victim) || ishitbox(victim))
+				var/obj/obj_victim = victim
+				var/damage_mult = 1
+				if(ismecha(obj_victim))
+					damage_mult = 5
+				obj_victim.take_damage(15 * damage_mult, BURN, ENERGY, armour_penetration = 60)
 	timer_ref = addtimer(CALLBACK(src, PROC_REF(execute_attack)), ZEROFORM_TICK_RATE, TIMER_STOPPABLE)
 
 ///ends and cleans up beam

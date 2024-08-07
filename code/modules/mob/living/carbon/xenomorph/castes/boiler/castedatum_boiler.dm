@@ -25,9 +25,6 @@
 	// *** Health *** //
 	max_health = 325
 
-	// *** Evolution *** //
-	//upgrade_threshold = TIER_THREE_THRESHOLD // RUTGMC DELETION
-
 	deevolves_to = /mob/living/carbon/xenomorph/spitter
 
 	// *** Darksight *** ///
@@ -35,7 +32,7 @@
 
 	// *** Flags *** //
 	caste_flags = CASTE_ACID_BLOOD|CASTE_EVOLUTION_ALLOWED
-	can_flags = CASTE_CAN_BE_QUEEN_HEALED|CASTE_CAN_BE_GIVEN_PLASMA|CASTE_CAN_BE_LEADER
+	can_flags = CASTE_CAN_BE_QUEEN_HEALED|CASTE_CAN_BE_GIVEN_PLASMA|CASTE_CAN_BE_LEADER|CASTE_CAN_HOLD_FACEHUGGERS|CASTE_CAN_HOLD_JELLY
 	caste_traits = null
 
 	// *** Defense *** //
@@ -43,9 +40,8 @@
 
 	// *** Ranged Attack *** //
 	spit_delay = 1 SECONDS
-/* RU TGMC EDIT
-	spit_types = list(/datum/ammo/xeno/boiler_gas, /datum/ammo/xeno/boiler_gas/corrosive)
-RU TGMC EDIT */
+	spit_types = list(/datum/ammo/xeno/boiler_gas/corrosive)
+
 	// *** Minimap Icon *** //
 	minimap_icon = "boiler"
 
@@ -70,6 +66,8 @@ RU TGMC EDIT */
 		/datum/action/ability/xeno_action/toggle_long_range,
 		/datum/action/ability/xeno_action/toggle_bomb,
 		/datum/action/ability/activable/xeno/spray_acid/line/boiler,
+		/datum/action/ability/xeno_action/dump_acid,
+		/datum/action/ability/xeno_action/place_trap,
 	)
 
 /datum/xeno_caste/boiler/normal
@@ -80,10 +78,10 @@ RU TGMC EDIT */
 	caste_desc = "A horrendously effective alien siege engine."
 	upgrade = XENO_UPGRADE_PRIMO
 	primordial_message = "We have refined the art of bombardement to perfection. End them before they can utter a desperate plea."
-/* RU TGMC EDIT
+
 	// *** Ranged Attack *** //
-	spit_types = list(/datum/ammo/xeno/boiler_gas, /datum/ammo/xeno/boiler_gas/lance, /datum/ammo/xeno/boiler_gas/corrosive, /datum/ammo/xeno/boiler_gas/corrosive/lance)
-RU TGMC EDIT */
+	spit_types = list(/datum/ammo/xeno/boiler_gas/corrosive, /datum/ammo/xeno/boiler_gas/corrosive/lance)
+
 	actions = list(
 		/datum/action/ability/xeno_action/xeno_resting,
 		/datum/action/ability/xeno_action/watch_xeno,
@@ -95,4 +93,6 @@ RU TGMC EDIT */
 		/datum/action/ability/xeno_action/toggle_long_range,
 		/datum/action/ability/xeno_action/toggle_bomb,
 		/datum/action/ability/activable/xeno/spray_acid/line/boiler,
+		/datum/action/ability/xeno_action/dump_acid,
+		/datum/action/ability/xeno_action/place_trap,
 	)

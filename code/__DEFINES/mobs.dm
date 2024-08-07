@@ -4,7 +4,13 @@
 #define AI_VOX
 
 //Mob movement define
-#define DIAG_MOVEMENT_ADDED_DELAY_MULTIPLIER 1.6
+
+///Speed mod for walk intent
+#define MOB_WALK_MOVE_MOD 4
+///Speed mod for run intent
+#define MOB_RUN_MOVE_MOD 3
+///Move mod for going diagonally
+#define DIAG_MOVEMENT_ADDED_DELAY_MULTIPLIER (sqrt(2))
 
 
 //Pain or shock reduction for different reagents
@@ -215,6 +221,16 @@ GLOBAL_LIST_INIT(xenoupgradetiers, list(XENO_UPGRADE_BASETYPE, XENO_UPGRADE_INVA
 #define ORGAN_EYES 6
 #define ORGAN_APPENDIX 7
 
+//organ slots
+#define ORGAN_SLOT_APPENDIX "appendix"
+#define ORGAN_SLOT_BRAIN "brain"
+#define ORGAN_SLOT_EARS "ears"
+#define ORGAN_SLOT_EYES "eyes"
+#define ORGAN_SLOT_HEART "heart"
+#define ORGAN_SLOT_LIVER "liver"
+#define ORGAN_SLOT_LUNGS "lungs"
+#define ORGAN_SLOT_KIDNEYS "kidneys"
+
 #define ORGAN_HEALTHY 0
 #define ORGAN_BRUISED 1
 #define ORGAN_BROKEN 2
@@ -357,6 +373,7 @@ GLOBAL_LIST_INIT(xenoupgradetiers, list(XENO_UPGRADE_BASETYPE, XENO_UPGRADE_INVA
 #define IS_MOTH (1<<3)
 #define IS_SECTOID (1<<4)
 #define IS_MONKEY (1<<5)
+#define IS_YAUTJA (1<<6)
 //=================================================
 
 //AFK status
@@ -400,13 +417,14 @@ GLOBAL_LIST_INIT(xenoupgradetiers, list(XENO_UPGRADE_BASETYPE, XENO_UPGRADE_INVA
 #define HUMAN_MAX_PALENESS 30 //this is added to human skin tone to get value of pale_max variable
 
 
-// Human Overlay Indexes
-/* RU TGMC EDIT
-#define LASER_LAYER 29 //For sniper targeting laser
-#define MOTH_WINGS_LAYER 28
-#define MUTATIONS_LAYER 27
-#define DAMAGE_LAYER 26
-RU TGMC EDIT */
+// Overlay Indexes
+#define PRED_LASER_LAYER 32
+#define LASER_LAYER 31
+#define WOUND_LAYER 30
+#define MOTH_WINGS_LAYER 29
+#define MUTATIONS_LAYER 28
+#define DAMAGE_LAYER 27
+#define FLAY_LAYER 26
 #define UNIFORM_LAYER 25
 #define TAIL_LAYER 24 //bs12 specific. this hack is probably gonna come back to haunt me
 #define ID_LAYER 23
@@ -432,9 +450,9 @@ RU TGMC EDIT */
 #define OVERHEALTH_SHIELD_LAYER 3
 #define TARGETED_LAYER 2 //for target sprites when held at gun point, and holo cards.
 #define FIRE_LAYER 1 //If you're on fire
-/* RU TGMC EDIT
-#define TOTAL_LAYERS 29
-RU TGMC EDIT */
+
+#define TOTAL_LAYERS 32
+
 #define MOTH_WINGS_BEHIND_LAYER 1
 
 #define TOTAL_UNDERLAYS 1
@@ -460,6 +478,11 @@ RU TGMC EDIT */
 ///Xeno is currently performing a leap/dash attack
 #define XENO_LEAPING (1<<0)
 
+#define HIVE_CAN_COLLAPSE_FROM_SILO (1<<1)
+
+#define XENO_WEAK_ACID_PUDDLE_DAMAGE 8 //Weak acid damage dealt by acid puddles
+#define XENO_HIGH_ACID_PUDDLE_DAMAGE 20 //Strong acid damage dealt by acid puddles
+
 #define XENO_DEFAULT_VENT_ENTER_TIME 4.5 SECONDS //Standard time for a xeno to enter a vent.
 #define XENO_DEFAULT_VENT_EXIT_TIME 2 SECONDS //Standard time for a xeno to exit a vent.
 #define XENO_DEFAULT_ACID_PUDDLE_DAMAGE 14 //Standard damage dealt by acid puddles
@@ -474,7 +497,6 @@ RU TGMC EDIT */
 #define XENO_SLOWDOWN_REGEN 0.4
 
 #define XENO_DEADHUMAN_DRAG_SLOWDOWN 2
-//#define XENO_EXPLOSION_GIB_THRESHOLD 0.95 //if your effective bomb armour is less than 5, devestating explosions will gib xenos //RUTGMC REMOVAL - Explosions
 
 #define KING_SUMMON_TIMER_DURATION 5 MINUTES
 
@@ -496,6 +518,9 @@ RU TGMC EDIT */
 #define XENO_SILO_DETECTION_RANGE 10//How far silos can detect hostiles
 #define XENO_HIVEMIND_DETECTION_RANGE 10 //How far out (in tiles) can the hivemind detect hostiles
 #define XENO_HIVEMIND_DETECTION_COOLDOWN 1 MINUTES
+
+#define XENO_RESTING_COOLDOWN 2 SECONDS
+#define XENO_UNRESTING_COOLDOWN 1 SECONDS
 
 #define XENO_PARALYZE_NORMALIZATION_MULTIPLIER 5 //Multiplies an input to normalize xeno paralyze duration times.
 #define XENO_STUN_NORMALIZATION_MULTIPLIER 2 //Multiplies an input to normalize xeno stun duration times.
@@ -583,7 +608,7 @@ RU TGMC EDIT */
 
 #define RAVAGER_ENDURE_DURATION				10 SECONDS
 #define RAVAGER_ENDURE_DURATION_WARNING		0.7
-#define RAVAGER_ENDURE_HP_LIMIT				-125 //RUTGMC EDIT
+#define RAVAGER_ENDURE_HP_LIMIT				-125
 
 #define RAVAGER_RAGE_DURATION							10 SECONDS
 #define RAVAGER_RAGE_WARNING							0.7
@@ -646,6 +671,8 @@ RU TGMC EDIT */
 #define RESIN_OTHER_TIME 1 SECONDS //Time it takes to apply resin jelly to other xenos
 
 //Boiler defines
+#define BOILER_GAS_DELAY 0.5 SECONDS
+#define BOILER_DUMP_SPEED -1.5
 #define BOILER_LUMINOSITY_BASE 0
 #define BOILER_LUMINOSITY_BASE_COLOR LIGHT_COLOR_GREEN
 #define BOILER_LUMINOSITY_AMMO 0.5 //don't set this to 0. How much each 'piece' of ammo in reserve glows by.
@@ -653,6 +680,12 @@ RU TGMC EDIT */
 #define BOILER_LUMINOSITY_AMMO_CORROSIVE_COLOR LIGHT_COLOR_GREEN
 #define BOILER_BOMBARD_COOLDOWN_REDUCTION 1.5 //Amount of seconds each glob stored reduces bombard cooldown by
 #define	BOILER_LUMINOSITY_THRESHOLD 2 //Amount of ammo needed to start glowing
+
+//Panther defines
+#define PANTHER_EVASION_COOLDOWN 2.5 SECONDS // how close a nearby human has to be in order to be targeted
+#define PANTHER_EVASION_PLASMADRAIN 3
+#define PANTHER_EVASION_LOW_PLASMADRAIN 1.5
+#define PANTHER_TEARING_TAIL_REAGENT_AMOUNT 5
 
 //Hivelord defines
 #define HIVELORD_TUNNEL_DISMANTLE_TIME 3 SECONDS
@@ -694,35 +727,16 @@ RU TGMC EDIT */
 #define SENTINEL_INTOXICATED_RESIST_REDUCTION 8 //Amount of stacks removed every time the Intoxicated debuff is Resisted against.
 #define SENTINEL_INTOXICATED_SANGUINAL_INCREASE 3 //Amount of debuff stacks applied for every tick of Sanguinal.
 
-//Wraith defines
-
-#define WRAITH_BLINK_DRAG_NONFRIENDLY_MULTIPLIER 20 //The amount we multiply the cooldown by when we teleport while dragging a non-friendly target
-#define WRAITH_BLINK_DRAG_FRIENDLY_MULTIPLIER 4 //The amount we multiply the cooldown by when we teleport while dragging a friendly target
-#define WRAITH_BLINK_RANGE 3
-
-#define WRAITH_BANISH_BASE_DURATION 10 SECONDS
-#define WRAITH_BANISH_NONFRIENDLY_LIVING_MULTIPLIER 0.5
-#define WRAITH_BANISH_VERY_SHORT_MULTIPLIER 0.3
-
-#define WRAITH_TELEPORT_DEBUFF_STAGGER_STACKS 2 SECONDS //Stagger and slow stacks applied to adjacent living hostiles before/after a teleport
-#define WRAITH_TELEPORT_DEBUFF_SLOWDOWN_STACKS 3 //Stagger and slow stacks applied to adjacent living hostiles before/after a teleport
-
 //Larva defines
 #define LARVA_VENT_CRAWL_TIME 1 SECONDS //Larva can crawl into vents fast
 
-/* RUTGMC DELETION, WIDOW DELETION
-//Widow Defines
-#define WIDOW_SPEED_BONUS 1 // How much faster widow moves while she has wall_speedup element
-#define WIDOW_WEB_HOOK_RANGE 10 // how far the web hook can reach
-#define WIDOW_WEB_HOOK_MIN_RANGE 3 // the minimum range that the hook must travel to use the ability
-#define WIDOW_WEB_HOOK_SPEED 3 // how fast widow yeets herself when using web hook
-
-//Spiderling defines
-#define TIME_TO_DISSOLVE 5 SECONDS
-#define SPIDERLING_RAGE_RANGE 10 // how close a nearby human has to be in order to be targeted
-*/
 //Praetorian defines
 #define PRAE_CHARGEDISTANCE 6
+
+// Chimera defines
+//Stagger and slowdown stacks applied to adjacent living hostiles before/after a teleport
+#define CHIMERA_TELEPORT_DEBUFF_STAGGER_STACKS 2 SECONDS
+#define CHIMERA_TELEPORT_DEBUFF_SLOWDOWN_STACKS 3
 
 //misc
 
@@ -793,8 +807,6 @@ GLOBAL_LIST_INIT(human_body_parts, list(BODY_ZONE_HEAD,
 #define GRAB_PIXEL_SHIFT_NECK 16
 
 #define HUMAN_CARRY_SLOWDOWN 0.35
-//#define HUMAN_EXPLOSION_GIB_THRESHOLD 0.1 //RUTGMC DELETION, explosions
-
 
 // =============================
 // Hallucinations - health hud screws for carbon mobs
@@ -816,14 +828,6 @@ GLOBAL_LIST_INIT(human_body_parts, list(BODY_ZONE_HEAD,
 #define IGNORE_SLOWDOWNS (1<<4)
 
 #define IGNORE_LOC_CHANGE (IGNORE_USER_LOC_CHANGE|IGNORE_TARGET_LOC_CHANGE)
-
-/* RUTGMC DELETION
-#define TIER_ONE_THRESHOLD 420
-
-#define TIER_TWO_THRESHOLD 840
-
-#define TIER_THREE_THRESHOLD 1750
-*/
 
 // Pheromones and buff orders
 
@@ -849,7 +853,8 @@ GLOBAL_LIST_INIT(human_body_parts, list(BODY_ZONE_HEAD,
 #define BOILER_WATER_SLOWDOWN 0
 ///Slowdown for warlocks moving through liquid
 #define WARLOCK_WATER_SLOWDOWN 0
-
+///Slowdown for favehuggers moving through liquid
+#define FACEHUGGER_WATER_SLOWDOWN 1.6
 
 //Species defines
 
@@ -857,3 +862,37 @@ GLOBAL_LIST_INIT(human_body_parts, list(BODY_ZONE_HEAD,
 #define SPECIES_HUMAN "species_human"
 ///Combat robot species
 #define SPECIES_COMBAT_ROBOT "species_combat_robot"
+
+///Nextmove delay after performing an interaction with a grab on something
+#define GRAB_SLAM_DELAY 0.7 SECONDS
+///Default damage for slamming a mob against an object
+#define BASE_OBJ_SLAM_DAMAGE 10
+///Default damage for slamming a mob against a wall
+#define BASE_WALL_SLAM_DAMAGE 15
+///Default damage for slamming a mob against another mob
+#define BASE_MOB_SLAM_DAMAGE 8
+
+// Yautja defines
+
+//Gear select defines
+#define YAUTJA_GEAR_GLAIVE "The Lumbering Glaive"
+#define YAUTJA_GEAR_WHIP "The Rending Chain-Whip"
+#define YAUTJA_GEAR_SWORD "The Piercing Hunting Sword"
+#define YAUTJA_GEAR_SCYTHE "The Cleaving War-Scythe"
+#define YAUTJA_GEAR_STICK "The Adaptive Combi-Stick"
+#define YAUTJA_GEAR_SPEAR "The Nimble Spear"
+#define YAUTJA_GEAR_SCIMS "The Fearsome Scimitars"
+#define YAUTJA_GEAR_LAUNCHER "The Fleeting Spike Launcher"
+#define YAUTJA_GEAR_PISTOL "The Swift Plasma Pistol"
+#define YAUTJA_GEAR_DISC "The Purifying Smart-Disc"
+#define YAUTJA_GEAR_FULL_ARMOR "The Formidable Plate Armor"
+#define YAUTJA_GEAR_SHIELD "The Steadfast Shield"
+#define YAUTJA_GEAR_DRONE "The Agile Drone"
+
+#define YAUTJA_GEAR_GLAIVE_ALT "The Imposing Glaive"
+#define YAUTJA_GEAR_SCYTHE_ALT "The Ripping War-Scythe"
+
+#define YAUTJA_THRALL_GEAR_MACHETE "The Swift Machete"
+#define YAUTJA_THRALL_GEAR_RAPIER "The Dancing Rapier"
+#define YAUTJA_THRALL_GEAR_CLAYMORE "The Broad Claymore"
+#define YAUTJA_THRALL_GEAR_FIREAXE "The Purposeful Fireaxe"

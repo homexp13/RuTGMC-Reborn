@@ -1,5 +1,5 @@
 /obj/machinery/deployable
-	flags_atom = PREVENT_CONTENTS_EXPLOSION
+	flags_atom = CRITICAL_ATOM|PREVENT_CONTENTS_EXPLOSION
 	hud_possible = list(MACHINE_HEALTH_HUD)
 	obj_flags = CAN_BE_HIT
 	allow_pass_flags = PASS_AIR
@@ -93,14 +93,4 @@
 /obj/machinery/deployable/ex_act(severity)
 	if(CHECK_BITFIELD(resistance_flags, INDESTRUCTIBLE))
 		return FALSE
-	if(soft_armor.getRating(BOMB) >= 100)
-		return FALSE
-	switch(severity)
-		if(EXPLODE_DEVASTATE)
-			qdel(src)
-		if(EXPLODE_HEAVY)
-			take_damage(200, damage_flag = BOMB, effects = TRUE)
-		if(EXPLODE_LIGHT)
-			take_damage(100, damage_flag = BOMB, effects = TRUE)
-		if(EXPLODE_WEAK)
-			take_damage(50, damage_flag = BOMB, effects = TRUE)
+	take_damage(severity, damage_flag = BOMB, effects = TRUE)

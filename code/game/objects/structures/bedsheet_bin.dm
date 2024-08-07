@@ -77,6 +77,12 @@ LINEN BINS
 /obj/item/bedsheet/brown
 	icon_state = "sheetbrown"
 
+/obj/item/bedsheet/pred
+	name = "Hunter Nav Console"
+	desc = "A console used by the Hunters for navigation purposes."
+	icon = 'icons/obj/machines/yautja_machines.dmi'
+	icon_state = "cameras"
+
 
 
 
@@ -101,7 +107,8 @@ LINEN BINS
 		. += "There are [amount] bed sheets in the bin."
 
 
-/obj/structure/bedsheetbin/update_icon()
+/obj/structure/bedsheetbin/update_icon_state()
+	. = ..()
 	switch(amount)
 		if(0)
 			icon_state = "linenbin-empty"

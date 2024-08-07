@@ -18,15 +18,7 @@
 	canSmoothWith = list(SMOOTH_GROUP_FENCE)
 
 /obj/structure/fence/ex_act(severity)
-	switch(severity)
-		if(EXPLODE_DEVASTATE)
-			deconstruct(FALSE)
-		if(EXPLODE_HEAVY)
-			take_damage(rand(100, 125), BRUTE, BOMB)//Almost broken or half way
-		if(EXPLODE_LIGHT)
-			take_damage(rand(50, 75), BRUTE, BOMB)
-		if(EXPLODE_WEAK)
-			take_damage(30, BRUTE, BOMB)
+	take_damage(severity / 2, BRUTE, BOMB)
 
 /obj/structure/fence/attackby(obj/item/I, mob/user, params)
 	. = ..()
@@ -45,18 +37,18 @@
 			amount_needed = 4
 
 		if(R.amount < amount_needed)
-			to_chat(user, "<span class='warning'>You need more metal rods to repair [src].")
+			to_chat(user, span_warning("You need more metal rods to repair [src]."))
 			return
 
 		user.visible_message(span_notice("[user] starts repairing [src] with [R]."),
-		"<span class='notice'>You start repairing [src] with [R]")
+		span_notice("You start repairing [src] with [R]"))
 		playsound(loc, 'sound/items/wirecutter.ogg', 25, 1)
 
 		if(!do_after(user, 30, NONE, src, BUSY_ICON_FRIENDLY))
 			return
 
 		if(R.amount < amount_needed)
-			to_chat(user, "<span class='warning'>You need more metal rods to repair [src].")
+			to_chat(user, span_warning("You need more metal rods to repair [src]."))
 			return
 
 		R.use(amount_needed)
@@ -66,7 +58,7 @@
 		icon = 'icons/obj/smooth_objects/fence.dmi'
 		playsound(loc, 'sound/items/wirecutter.ogg', 25, 1)
 		user.visible_message(span_notice("[user] repairs [src] with [R]."),
-		"<span class='notice'>You repair [src] with [R]")
+		span_notice("You repair [src] with [R]"))
 
 	else if(cut) //Cut/brokn grilles can't be messed with further than this
 		return
@@ -101,14 +93,14 @@
 
 	else if(iswirecutter(I))
 		user.visible_message(span_notice("[user] starts cutting through [src] with [I]."),
-		"<span class='notice'>You start cutting through [src] with [I]")
+		span_notice("You start cutting through [src] with [I]"))
 		playsound(loc, 'sound/items/wirecutter.ogg', 25, 1)
 		if(!do_after(user, 20, NONE, src, BUSY_ICON_BUILD))
 			return
 
 		playsound(loc, 'sound/items/wirecutter.ogg', 25, 1)
 		user.visible_message(span_notice("[user] cuts through [src] with [I]."),
-		"<span class='notice'>You cut through [src] with [I]")
+		span_notice("You cut through [src] with [I]"))
 		deconstruct(TRUE)
 
 
@@ -137,5 +129,5 @@
 
 /obj/structure/fence/fire_act(exposed_temperature, exposed_volume)
 	if(exposed_temperature > T0C + 800)
-		take_damage(round(exposed_volume / 100), BURN, "fire")
+		take_damage(round(exposed_volume / 100), BURN, FIRE)
 	return ..()

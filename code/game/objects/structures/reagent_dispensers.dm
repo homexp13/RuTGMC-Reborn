@@ -46,17 +46,9 @@
 	create_reagents(tank_volume, AMOUNT_VISIBLE|DRAINABLE, list_reagents)
 
 /obj/structure/reagent_dispensers/ex_act(severity)
-	switch(severity)
-		if(EXPLODE_DEVASTATE)
-			qdel(src)
-		if(EXPLODE_HEAVY)
-			if (prob(50))
-				new /obj/effect/particle_effect/water(loc)
-				qdel(src)
-		if(EXPLODE_LIGHT)
-			if (prob(5))
-				new /obj/effect/particle_effect/water(loc)
-				qdel(src)
+	if(prob(severity / 4))
+		new /obj/effect/particle_effect/water(loc)
+		qdel(src)
 
 //Dispensers
 /obj/structure/reagent_dispensers/watertank
@@ -67,7 +59,9 @@
 	amount_per_transfer_from_this = 10
 	list_reagents = list(/datum/reagent/water = 1000)
 
-
+/obj/structure/reagent_dispensers/watertank/pred
+	icon = 'icons/obj/machines/yautja_machines.dmi'
+	icon_state = "watertank"
 
 /obj/structure/reagent_dispensers/fueltank
 	name = "fueltank"
@@ -81,6 +75,10 @@
 	var/obj/item/assembly_holder/rig
 	//Whether the tank is already exploding to prevent chain explosions
 	var/exploding = FALSE
+
+/obj/structure/reagent_dispensers/fueltank/pred
+	icon = 'icons/obj/machines/yautja_machines.dmi'
+	icon_state = "weldtank"
 
 /obj/structure/reagent_dispensers/fueltank/Destroy()
 	QDEL_NULL(rig)
@@ -165,14 +163,14 @@
 	add_overlay(overlay)
 
 
-/obj/structure/reagent_dispensers/fueltank/bullet_act(obj/projectile/Proj)
+/obj/structure/reagent_dispensers/fueltank/bullet_act(obj/projectile/proj)
 	if(exploding)
 		return FALSE
 
-	. = ..()
-
-	if(Proj.damage > 10 && prob(60) && (Proj.ammo.damage_type in list(BRUTE, BURN)))
+	if(proj.damage > 10 && prob(60) && (proj.ammo.damage_type in list(BRUTE, BURN)))
+		log_attack("[key_name(proj.firer)] detonated a fuel tank with a projectile at [AREACOORD(src)].")
 		explode()
+	return ..()
 
 /obj/structure/reagent_dispensers/fueltank/ex_act()
 	explode()

@@ -47,6 +47,8 @@
 	///What faction secured that miner
 	var/faction = FACTION_TERRAGOV
 
+	var/obj/machinery/camera/miner/camera
+
 /obj/machinery/miner/damaged	//mapping and all that shebang
 	miner_status = MINER_DESTROYED
 	icon_state = "mining_drill_error"
@@ -64,6 +66,7 @@
 	init_marker()
 	start_processing()
 	RegisterSignal(SSdcs, COMSIG_GLOB_DROPSHIP_HIJACKED, PROC_REF(disable_on_hijack))
+	camera = new /obj/machinery/camera/miner(src)
 
 /**
  * This proc is called during Initialize() and should be used to initially setup the minimap marker of a functional miner.
@@ -73,7 +76,8 @@
 	var/marker_icon = "miner_[mineral_value >= PLATINUM_CRATE_SELL_AMOUNT ? "platinum" : "phoron"]_on"
 	SSminimaps.add_marker(src, MINIMAP_FLAG_ALL, image('icons/UI_icons/map_blips.dmi', null, marker_icon)) //RU TGMC edit
 
-/obj/machinery/miner/update_icon()
+/obj/machinery/miner/update_icon_state()
+	. = ..()
 	switch(miner_status)
 		if(MINER_RUNNING)
 			icon_state = "mining_drill_active_[miner_upgrade_type]"
@@ -288,7 +292,7 @@
 		stop_processing()
 		SSminimaps.remove_marker(src)
 		var/marker_icon = "miner_[mineral_value >= PLATINUM_CRATE_SELL_AMOUNT ? "platinum" : "phoron"]_off"
-		SSminimaps.add_marker(src, MINIMAP_FLAG_ALL, image('icons/UI_icons/map_blips.dmi', null, marker_icon)) //RUTGMC edit - icon change
+		SSminimaps.add_marker(src, MINIMAP_FLAG_ALL, image('icons/UI_icons/map_blips.dmi', null, marker_icon))
 		return
 	if(add_tick >= required_ticks)
 		if(miner_upgrade_type == MINER_AUTOMATED)
@@ -313,35 +317,35 @@
 	else
 		add_tick += 1
 
-/obj/machinery/miner/attack_alien(mob/living/carbon/xenomorph/X, damage_amount = X.xeno_caste.melee_damage, damage_type = BRUTE, damage_flag = "", effects = TRUE, armor_penetration = 0, isrightclick = FALSE)
-	if(X.status_flags & INCORPOREAL) //Incorporeal xenos cannot attack physically.
+/obj/machinery/miner/attack_alien(mob/living/carbon/xenomorph/xeno_attacker, damage_amount = xeno_attacker.xeno_caste.melee_damage, damage_type = BRUTE, damage_flag = MELEE, effects = TRUE, armor_penetration = 0, isrightclick = FALSE)
+	if(xeno_attacker.status_flags & INCORPOREAL) //Incorporeal xenos cannot attack physically.
 		return
-	if(miner_upgrade_type == MINER_RESISTANT && !(X.mob_size == MOB_SIZE_BIG || X.xeno_caste.caste_flags & CASTE_IS_STRONG))
-		X.visible_message(span_notice("[X]'s claws bounce off of [src]'s reinforced plating."),
+	if(miner_upgrade_type == MINER_RESISTANT && !(xeno_attacker.mob_size == MOB_SIZE_BIG || xeno_attacker.xeno_caste.caste_flags & CASTE_IS_STRONG))
+		xeno_attacker.visible_message(span_notice("[xeno_attacker]'s claws bounce off of [src]'s reinforced plating."),
 		span_notice("We can't slash through [src]'s reinforced plating!"))
 		return
 	while(miner_status != MINER_DESTROYED)
-		if(X.do_actions)
-			return balloon_alert(X, "busy")
-		if(!do_after(X, 1.5 SECONDS, NONE, src, BUSY_ICON_DANGER, BUSY_ICON_HOSTILE))
+		if(xeno_attacker.do_actions)
+			return balloon_alert(xeno_attacker, "busy")
+		if(!do_after(xeno_attacker, 1.5 SECONDS, NONE, src, BUSY_ICON_DANGER, BUSY_ICON_HOSTILE))
 			return
-		X.do_attack_animation(src, ATTACK_EFFECT_CLAW)
-		X.visible_message(span_danger("[X] slashes \the [src]!"), \
+		xeno_attacker.do_attack_animation(src, ATTACK_EFFECT_CLAW)
+		xeno_attacker.visible_message(span_danger("[xeno_attacker] slashes \the [src]!"), \
 		span_danger("We slash \the [src]!"), null, 5)
 		playsound(loc, "alien_claw_metal", 25, TRUE)
 		miner_integrity -= 25
 		set_miner_status()
-		if(miner_status == MINER_DESTROYED && X.client)
-			var/datum/personal_statistics/personal_statistics = GLOB.personal_statistics_list[X.ckey]
+		if(miner_status == MINER_DESTROYED && xeno_attacker.client)
+			var/datum/personal_statistics/personal_statistics = GLOB.personal_statistics_list[xeno_attacker.ckey]
 			personal_statistics.miner_sabotages_performed++
 
-/* RUTGMC DELETION
 /obj/machinery/miner/proc/set_miner_status()
 	var/health_percent = round((miner_integrity / max_miner_integrity) * 100)
 	switch(health_percent)
 		if(-INFINITY to 0)
 			miner_status = MINER_DESTROYED
 			stored_mineral = 0
+			camera.toggle_cam(null, FALSE)
 		if(1 to 50)
 			stored_mineral = 0
 			miner_status = MINER_MEDIUM_DAMAGE
@@ -354,8 +358,17 @@
 			var/marker_icon = "miner_[mineral_value >= PLATINUM_CRATE_SELL_AMOUNT ? "platinum" : "phoron"]_on"
 			SSminimaps.add_marker(src, MINIMAP_FLAG_ALL, image('icons/UI_icons/map_blips.dmi', null, marker_icon))
 			miner_status = MINER_RUNNING
+			if(!camera.status)
+				camera.toggle_cam(null, FALSE)
 	update_icon()
-*/
+
+/obj/machinery/miner/Destroy()
+	qdel(camera)
+	camera = null
+	return ..()
+
+/obj/machinery/miner/attack_ai(mob/user)
+	return attack_hand(user)
 
 ///Called via global signal to prevent perpetual mining
 /obj/machinery/miner/proc/disable_on_hijack()

@@ -10,6 +10,7 @@
 		/datum/job/terragov/squad/smartgunner = 1,
 		/datum/job/terragov/squad/leader = 1,
 		/datum/job/terragov/medical/professor = 1,
+		/datum/job/terragov/medical/medicalofficer = 1,
 		/datum/job/terragov/silicon/synthetic = 1,
 		/datum/job/terragov/command/fieldcommander = 1,
 		/datum/job/xenomorph = FREE_XENO_AT_START
@@ -74,6 +75,8 @@
 	SSshuttle.moveShuttleToDock(shuttle.id, actual_crash_site, TRUE) // FALSE = instant arrival
 	addtimer(CALLBACK(src, PROC_REF(crash_shuttle), actual_crash_site), 10 MINUTES)
 
+	GLOB.start_squad_landmarks_list = null
+
 
 /datum/game_mode/infestation/crash/post_setup()
 	. = ..()
@@ -112,11 +115,6 @@
 		if(isxenolarva(i)) // Larva
 			var/mob/living/carbon/xenomorph/larva/X = i
 			X.evolution_stored = X.xeno_caste.evolution_threshold //Immediate roundstart evo for larva.
-		/* RUTGMC DELETION
-		else // Handles Shrike etc
-			var/mob/living/carbon/xenomorph/X = i
-			X.upgrade_stored = X.xeno_caste.upgrade_threshold
-		*/
 
 /datum/game_mode/infestation/crash/announce()
 	to_chat(world, span_round_header("The current map is - [SSmapping.configs[GROUND_MAP].map_name]!"))

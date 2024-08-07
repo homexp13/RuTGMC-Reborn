@@ -10,7 +10,7 @@
 	icon_state = "hypo"
 	amount_per_transfer_from_this = 10
 	possible_transfer_amounts = list(1, 3, 5, 10, 15, 20, 30)
-	volume = 60
+	volume = 120
 	init_reagent_flags = OPENCONTAINER
 	flags_equip_slot = ITEM_SLOT_BELT
 	flags_item = NOBLUDGEON
@@ -313,11 +313,31 @@
 	if(href_list["displayreagents"])
 		to_chat(usr, display_reagents())
 
+/obj/item/reagent_containers/hypospray/advanced/update_icon_state()
+	. = ..()
+	if(!reagents?.total_volume)
+		icon_state = "[initial(icon_state)]_0"
+		return
+	var/percent = round((reagents.total_volume / volume) * 100)
+	switch(percent)
+		if(0 to 9)
+			icon_state = initial(icon_state)
+		if(10 to 24)
+			icon_state = "[initial(icon_state)]_10"
+		if(25 to 49)
+			icon_state = "[initial(icon_state)]_25"
+		if(50 to 64)
+			icon_state = "[initial(icon_state)]_50"
+		if(65 to 79)
+			icon_state = "[initial(icon_state)]_65"
+		if(80 to 90)
+			icon_state = "[initial(icon_state)]_80"
+		if(91 to INFINITY)
+			icon_state = "[initial(icon_state)]_100"
 
 /obj/item/reagent_containers/hypospray/advanced/update_overlays()
 	. = ..()
 
-	overlays.Cut()
 	if(reagents.total_volume)
 		var/image/filling = image('icons/obj/reagentfillings.dmi', src, "[icon_state]10")
 
@@ -327,37 +347,28 @@
 				filling.icon_state = "[initial(icon_state)]-10"
 			if(10 to 24)
 				filling.icon_state = "[initial(icon_state)]10"
-				icon_state = "[initial(icon_state)]_10"
 			if(25 to 49)
 				filling.icon_state = "[initial(icon_state)]25"
-				icon_state = "[initial(icon_state)]_25"
 			if(50 to 64)
 				filling.icon_state = "[initial(icon_state)]50"
-				icon_state = "[initial(icon_state)]_50"
 			if(65 to 79)
 				filling.icon_state = "[initial(icon_state)]65"
-				icon_state = "[initial(icon_state)]_65"
 			if(80 to 90)
 				filling.icon_state = "[initial(icon_state)]80"
-				icon_state = "[initial(icon_state)]_80"
 			if(91 to INFINITY)
 				filling.icon_state = "[initial(icon_state)]100"
-				icon_state = "[initial(icon_state)]_100"
 
 		filling.color = mix_color_from_reagents(reagents.reagent_list)
-		overlays += filling
-
-	else
-		icon_state = "[initial(icon_state)]_0"
+		. += filling
 
 	if(ismob(loc))
 		var/injoverlay
 		switch(inject_mode)
-			if (HYPOSPRAY_INJECT_MODE_DRAW)
+			if(HYPOSPRAY_INJECT_MODE_DRAW)
 				injoverlay = "draw"
-			if (HYPOSPRAY_INJECT_MODE_INJECT)
+			if(HYPOSPRAY_INJECT_MODE_INJECT)
 				injoverlay = "inject"
-		add_overlay(injoverlay)
+		. += injoverlay
 
 /obj/item/reagent_containers/hypospray/advanced/examine(mob/user as mob)
 	. = ..()
@@ -388,7 +399,7 @@
 	name = "bicaridine hypospray"
 	desc = "A hypospray loaded with bicaridine. A chemical that heal cuts and bruises."
 	list_reagents = list(
-		/datum/reagent/medicine/bicaridine = 60,
+		/datum/reagent/medicine/bicaridine = 120,
 	)
 	description_overlay = "Bi"
 
@@ -396,7 +407,7 @@
 	name = "kelotane hypospray"
 	desc = "A hypospray loaded with kelotane. A chemical that heal burns."
 	list_reagents = list(
-		/datum/reagent/medicine/kelotane = 60,
+		/datum/reagent/medicine/kelotane = 120,
 	)
 	description_overlay = "Ke"
 
@@ -404,7 +415,7 @@
 	name = "tramadol hypospray"
 	desc = "A hypospray loaded with tramadol. A chemical that numbs pain."
 	list_reagents = list(
-		/datum/reagent/medicine/tramadol = 60,
+		/datum/reagent/medicine/tramadol = 120,
 	)
 	description_overlay = "Ta"
 
@@ -412,7 +423,7 @@
 	name = "tricordrazine hypospray"
 	desc = "A hypospray loaded with tricordrazine. A chemical that heal cuts, bruises, burns, toxicity, and oxygen deprivation."
 	list_reagents = list(
-		/datum/reagent/medicine/tricordrazine = 60,
+		/datum/reagent/medicine/tricordrazine = 120,
 	)
 	description_overlay = "Ti"
 
@@ -420,7 +431,7 @@
 	name = "dylovene hypospray"
 	desc = "A hypospray loaded with dylovene. A chemical that heal toxicity whilst purging toxins, hindering stamina in the process."
 	list_reagents = list(
-		/datum/reagent/medicine/dylovene = 60,
+		/datum/reagent/medicine/dylovene = 120,
 	)
 	description_overlay = "Dy"
 
@@ -429,7 +440,7 @@
 	desc = "A hypospray loaded with inaprovaline."
 	amount_per_transfer_from_this = 15
 	list_reagents = list(
-		/datum/reagent/medicine/inaprovaline = 60,
+		/datum/reagent/medicine/inaprovaline = 120,
 	)
 	description_overlay = "In"
 
@@ -438,7 +449,7 @@
 	desc = "A hypospray loaded with meralyne. An advanced chemical that heal cuts and bruises rapidly."
 	amount_per_transfer_from_this = 5
 	list_reagents = list(
-		/datum/reagent/medicine/meralyne = 60,
+		/datum/reagent/medicine/meralyne = 120,
 	)
 	description_overlay = "Mr"
 
@@ -447,7 +458,7 @@
 	desc = "A hypospray loaded with dermaline. An advanced chemical that heal burns rapdily."
 	amount_per_transfer_from_this = 5
 	list_reagents = list(
-		/datum/reagent/medicine/dermaline = 60,
+		/datum/reagent/medicine/dermaline = 120,
 	)
 	description_overlay = "Dr"
 
@@ -455,9 +466,9 @@
 	name = "advanced combat hypospray"
 	desc = "A hypospray loaded with several doses of advanced healing and painkilling chemicals. Intended for use in active combat."
 	list_reagents = list(
-		/datum/reagent/medicine/meralyne = 20,
-		/datum/reagent/medicine/dermaline = 20,
-		/datum/reagent/medicine/tramadol = 20,
+		/datum/reagent/medicine/meralyne = 40,
+		/datum/reagent/medicine/dermaline = 40,
+		/datum/reagent/medicine/tramadol = 40,
 	)
 	description_overlay = "Av"
 
@@ -465,15 +476,15 @@
 	name = "meraderm hypospray"
 	desc = "A hypospray loaded with meralyne and dermaline."
 	list_reagents = list(
-		/datum/reagent/medicine/meralyne = 30,
-		/datum/reagent/medicine/dermaline = 30,
+		/datum/reagent/medicine/meralyne = 60,
+		/datum/reagent/medicine/dermaline = 60,
 	)
 	description_overlay = "MD"
 
 /obj/item/reagent_containers/hypospray/advanced/oxycodone
 	name = "oxycodone hypospray"
 	desc = "A hypospray loaded with oxycodone. An advanced but highly addictive chemical which almost entirely negates pain and shock."
-	list_reagents = list(/datum/reagent/medicine/oxycodone = 60)
+	list_reagents = list(/datum/reagent/medicine/oxycodone = 120)
 	description_overlay = "Ox"
 
 /obj/item/reagent_containers/hypospray/advanced/hypervene
@@ -481,7 +492,7 @@
 	desc = "A hypospray loaded with hypervene. A chemical that rapdidly flushes the body of all chemicals and toxins."
 	amount_per_transfer_from_this = 3
 	list_reagents = list(
-		/datum/reagent/hypervene = 60,
+		/datum/reagent/hypervene = 120,
 	)
 	description_overlay = "Ht"
 
@@ -489,29 +500,57 @@
 	name = "nanoblood hypospray"
 	desc = "A hypospray loaded with nanoblood. A chemical which rapidly restores blood at the cost of minor toxic damage."
 	amount_per_transfer_from_this = 5
+	volume = 60
 	list_reagents = list(
 		/datum/reagent/medicine/nanoblood = 60,
 	)
 	description_overlay = "Na"
+
+/obj/item/reagent_containers/hypospray/advanced/peridaxon
+	name = "Peridaxon hypospray"
+	desc = "A hypospray loaded with Peridaxon,  a chemical that removes the consequences from organs !DO NOT USE MORE THAN ONCE AT A TIME!"
+	amount_per_transfer_from_this = 5
+	list_reagents = list(
+		/datum/reagent/medicine/peridaxon = 120,
+	)
+	description_overlay = "Pe"
 
 /obj/item/reagent_containers/hypospray/advanced/peridaxonplus
 	name = "Peridaxon+ hypospray"
 	desc = "A hypospray loaded with Peridaxon Plus, a chemical that heals organs while causing a buildup of toxins. Use with antitoxin. !DO NOT USE IN ACTIVE COMBAT!"
 	amount_per_transfer_from_this = 3
 	list_reagents = list(
-		/datum/reagent/medicine/peridaxon_plus = 20,
-		/datum/reagent/medicine/hyronalin = 40,
+		/datum/reagent/medicine/peridaxon_plus = 40,
+		/datum/reagent/medicine/hyronalin = 80,
 	)
 	description_overlay = "Pe+"
+
+/obj/item/reagent_containers/hypospray/advanced/quickclot
+	name = "Quickclot hypospray"
+	desc = "A hypospray loaded with quick-clot, a a chemical designed to pause all bleeding. Renew doses as needed."
+	amount_per_transfer_from_this = 15
+	list_reagents = list(
+		/datum/reagent/medicine/quickclot = 120,
+	)
+	description_overlay = "Qk"
 
 /obj/item/reagent_containers/hypospray/advanced/quickclotplus
 	name = "Quickclot+ hypospray"
 	desc = "A hypospray loaded with quick-clot plus, a chemical designed to remove internal bleeding. Use with antitoxin. !DO NOT USE IN ACTIVE COMBAT!"
 	amount_per_transfer_from_this = 5
 	list_reagents = list(
-		/datum/reagent/medicine/quickclotplus = 60,
+		/datum/reagent/medicine/quickclotplus = 120,
 	)
 	description_overlay = "Qk+"
+
+/obj/item/reagent_containers/hypospray/advanced/russian_red
+	name = "Russian Red hypospray"
+	desc = "A hypospray loaded with Russian Red, a chemical that heals all damage rapidly at the cost of small amounts of unhealable damage."
+	amount_per_transfer_from_this = 10
+	list_reagents = list(
+		/datum/reagent/medicine/russian_red = 120,
+	)
+	description_overlay = "Rr"
 
 /obj/item/reagent_containers/hypospray/advanced/big
 	name = "big hypospray"
@@ -519,13 +558,13 @@
 	item_state = "hypomed"
 	icon_state = "hypomed"
 	core_name = "hypospray"
-	volume = 120
+	volume = 240
 
 /obj/item/reagent_containers/hypospray/advanced/big/bicaridine
 	name = "big bicaridine hypospray"
 	desc = "A hypospray loaded with bicaridine. A chemical that heal cuts and bruises."
 	list_reagents = list(
-		/datum/reagent/medicine/bicaridine = 120,
+		/datum/reagent/medicine/bicaridine = 240,
 	)
 	description_overlay = "Bi"
 
@@ -533,7 +572,7 @@
 	name = "big kelotane hypospray"
 	desc = "A hypospray loaded with kelotane. A chemical that heal burns."
 	list_reagents = list(
-		/datum/reagent/medicine/kelotane = 120,
+		/datum/reagent/medicine/kelotane = 240,
 	)
 	description_overlay = "Ke"
 
@@ -541,7 +580,7 @@
 	name = "big tramadol hypospray"
 	desc = "A hypospray loaded with tramadol. A chemical that numbs pain."
 	list_reagents = list(
-		/datum/reagent/medicine/tramadol = 120,
+		/datum/reagent/medicine/tramadol = 240,
 	)
 	description_overlay = "Ta"
 
@@ -549,19 +588,19 @@
 	name = "big tricordrazine hypospray"
 	desc = "A hypospray loaded with tricordrazine. A chemical that heal cuts, bruises, burns, toxicity, and oxygen deprivation."
 	list_reagents = list(
-		/datum/reagent/medicine/tricordrazine = 120,
+		/datum/reagent/medicine/tricordrazine = 240,
 	)
 	description_overlay = "Ti"
 
 /obj/item/reagent_containers/hypospray/advanced/big/combatmix
 	name = "big combat mix hypospray"
-	desc = "A hypospray loaded with combat mix. There's a tag that reads BKTT 40:40:20:20."
+	desc = "A hypospray loaded with combat mix. There's a tag that reads BKTT 80:80:40:40."
 	amount_per_transfer_from_this = 15
 	list_reagents = list(
-		/datum/reagent/medicine/bicaridine = 40,
-		/datum/reagent/medicine/kelotane = 40,
-		/datum/reagent/medicine/tramadol = 20,
-		/datum/reagent/medicine/tricordrazine = 20,
+		/datum/reagent/medicine/bicaridine = 80,
+		/datum/reagent/medicine/kelotane = 80,
+		/datum/reagent/medicine/tramadol = 40,
+		/datum/reagent/medicine/tricordrazine = 40,
 	)
 	description_overlay = "Cm"
 
@@ -569,7 +608,7 @@
 	name = "big dylovene hypospray"
 	desc = "A hypospray loaded with dylovene. A chemical that heal toxicity whilst purging toxins, hindering stamina in the process."
 	list_reagents = list(
-		/datum/reagent/medicine/dylovene = 120,
+		/datum/reagent/medicine/dylovene = 240,
 	)
 	description_overlay = "Dy"
 
@@ -578,7 +617,7 @@
 	desc = "A hypospray loaded with inaprovaline. An emergency chemical used to stabilize and heal critical patients."
 	amount_per_transfer_from_this = 15
 	list_reagents = list(
-		/datum/reagent/medicine/inaprovaline = 120,
+		/datum/reagent/medicine/inaprovaline = 240,
 	)
 	description_overlay = "In"
 
@@ -586,7 +625,7 @@
 	name = "big isotonic hypospray"
 	desc = "A hypospray loaded with isotonic. A chemical that aids in replenishing blood."
 	list_reagents = list(
-		/datum/reagent/medicine/saline_glucose = 120,
+		/datum/reagent/medicine/saline_glucose = 240,
 	)
 	description_overlay = "Is"
 
@@ -594,7 +633,7 @@
 	name = "big spaceacillin hypospray"
 	desc = "A hypospray loaded with spaceacillin. A chemical which fights viral and bacterial infections."
 	list_reagents = list(
-		/datum/reagent/medicine/spaceacillin = 120,
+		/datum/reagent/medicine/spaceacillin = 240,
 	)
 	description_overlay = "Sp"
 
@@ -603,8 +642,8 @@
 	desc = "A hypospray loaded with a mixture of imidazoline and alkysine. Chemicals that will heal brain, eyes, and ears."
 	amount_per_transfer_from_this = 5
 	list_reagents = list(
-		/datum/reagent/medicine/imidazoline = 48,
-		/datum/reagent/medicine/alkysine = 12,
+		/datum/reagent/medicine/imidazoline = 96,
+		/datum/reagent/medicine/alkysine = 24,
 	)
 	description_overlay = "Im"
 
@@ -612,6 +651,6 @@
 	name = "big quick-clot hypospray"
 	desc = "A hypospray loaded with quick-clot. A chemical that halts internal bleeding and restores blood."
 	list_reagents = list(
-		/datum/reagent/medicine/quickclot = 120,
+		/datum/reagent/medicine/quickclot = 240,
 	)
 	description_overlay = "Qk"

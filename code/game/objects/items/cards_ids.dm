@@ -126,15 +126,20 @@
 		var/mob/living/L = loc
 		L.name = L.get_visible_name()
 
+/obj/item/card/id/proc/set_user_data(mob/living/carbon/human/human_user)
+	if(!istype(human_user))
+		return
+
+	registered_name = human_user.real_name
+	blood_type = human_user.blood_type
 
 /obj/item/card/id/verb/read()
 	set name = "Read ID Card"
-	set category = "Object"
+	set category = "Object.Clothing"
 	set src in usr
 
 	to_chat(usr, "[icon2html(src, usr)] [name]: The current assignment on the card is [assignment].")
 	to_chat(usr, "The blood type on the card is [blood_type].")
-
 
 /obj/item/card/id/silver
 	name = "identification card"
@@ -147,6 +152,10 @@
 	desc = "A golden card which shows power and might."
 	icon_state = "gold"
 	item_state = "gold_id"
+
+	marine_points = list(
+		CAT_SYNTH = SYNTH_TOTAL_BUY_POINTS,
+	)
 
 /obj/item/card/id/syndicate
 	name = "agent card"
@@ -248,9 +257,13 @@
 	icon_state = "dogtag"
 	item_state = "dogtag"
 	iff_signal = TGMC_LOYALIST_IFF
+	marine_points = list(
+		CAT_MARINE = DEFAULT_TOTAL_BUY_POINTS,
+	)
 	var/dogtag_taken = FALSE
 
 /obj/item/card/id/dogtag/update_icon_state()
+	. = ..()
 	if(dogtag_taken)
 		icon_state = initial(icon_state) + "_taken"
 		return
@@ -286,6 +299,11 @@
 		CAT_SGSUP = DEFAULT_TOTAL_BUY_POINTS,
 	)
 
+/obj/item/card/id/dogtag/robo
+	marine_points = list(
+		CAT_ROBO = DEFAULT_TOTAL_BUY_POINTS,
+	)
+
 /obj/item/card/id/dogtag/engineer
 	marine_points = list(
 		CAT_ENGSUP = ENGINEER_TOTAL_BUY_POINTS,
@@ -308,11 +326,14 @@
 
 /obj/item/card/id/dogtag/full
 	marine_points = list(
+		CAT_MARINE = DEFAULT_TOTAL_BUY_POINTS,
 		CAT_SGSUP = DEFAULT_TOTAL_BUY_POINTS,
 		CAT_ENGSUP = ENGINEER_TOTAL_BUY_POINTS,
 		CAT_LEDSUP = DEFAULT_TOTAL_BUY_POINTS,
 		CAT_MEDSUP = MEDIC_TOTAL_BUY_POINTS,
 		CAT_FCSUP = COMMANDER_TOTAL_BUY_POINTS,
+		CAT_SYNTH = SYNTH_TOTAL_BUY_POINTS,
+		CAT_ROBO = DEFAULT_TOTAL_BUY_POINTS, //necessary to correctly show max points
 	)
 
 /obj/item/card/id/dogtag/som

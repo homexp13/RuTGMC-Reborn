@@ -1,8 +1,3 @@
-
-
-
-//marine gloves
-
 /obj/item/clothing/gloves/marine
 	name = "marine combat gloves"
 	desc = "Standard issue marine tactical gloves. It reads: 'knit by Marine Widows Association'."
@@ -27,25 +22,6 @@
 	desc = "Standard issue marine tactical gloves but fingerless! It reads: 'knit by Marine Widows Association'."
 	icon_state = "gloves_marine_fingerless"
 	item_state = "fingerless"
-
-/obj/item/clothing/gloves/marine/hyperscale
-	name = "8E Chameleon TGMC combat gloves"
-	desc = "Standard issue marine tactical gloves BUT colorable with a facepaint! It reads: 'knit by Marine Widows Association'."
-	icon_state = "hyperscale_glove_inhand"
-	item_state = "hyperscale_glove_mob"
-	item_icons = list(slot_gloves = /datum/greyscale_config/marine_uniform)
-	greyscale_colors = ARMOR_PALETTE_BLACK
-	greyscale_config = /datum/greyscale_config/marine_uniform
-	colorable_colors = ARMOR_PALETTES_LIST
-	colorable_allowed = ICON_STATE_VARIANTS_ALLOWED|PRESET_COLORS_ALLOWED
-
-
-/obj/item/clothing/gloves/marine/hyperscale/color_item(obj/item/facepaint/paint, mob/user)
-	. = ..()
-	if(!ishuman(user))
-		return
-	var/mob/living/carbon/human/human = user
-	human.regenerate_icons()
 
 /obj/item/clothing/gloves/marine/insulated
 	name = "insulated marine combat gloves"
@@ -145,3 +121,36 @@
 	desc = "Gloves worn by commissars of the Imperial Army so that they do not soil their hands with the blood of their men."
 	icon_state = "red"
 	soft_armor = list(MELEE = 35, BULLET = 30, LASER = 30, ENERGY = 30, BOMB = 15, BIO = 10, FIRE = 20, ACID = 20)
+
+/obj/item/clothing/gloves/marine/separatist
+	name = "kevlar gloves TG-94"
+	desc = "Once before, the original of these gloves had protected the hands of the civilian militia of the colony of Terra during the heroic liberation of their territories from the hands of the enemy. 'Wear it with honor,' reads the inscription at the bottom"
+	icon_state = "separatist"
+	item_state = "separatist"
+
+/obj/item/clothing/gloves/marine/veteran/marine
+	name = "veteran gloves"
+	desc = "Ordinary Marine gloves, artfully reinforced for personal gain. An extra steel plate and a pair of cool white laces will definitely make this item look better. You're sure. The Marine Widows Association is outraged."
+	icon_state = "veteran_1"
+	item_state = "veteran"
+	var/gloves_inside_out = FALSE
+
+/obj/item/clothing/gloves/marine/veteran/marine/examine(mob/user)
+	. = ..()
+	. += span_info("You could <b>use it in-hand</b> to turn it inside out and change it's appearance.")
+
+/obj/item/clothing/gloves/marine/veteran/marine/attack_self(mob/user)
+	. = ..()
+	if(!gloves_inside_out)
+		to_chat(user, span_notice("You turn the gloves inside out and change their appearance."))
+		gloves_inside_out = TRUE
+	else
+		to_chat(user, span_notice("You roll the gloves back inside and they look just right."))
+		gloves_inside_out = initial(gloves_inside_out)
+	update_icon_state()
+
+/obj/item/clothing/gloves/marine/veteran/marine/update_icon_state()
+	if(gloves_inside_out)
+		icon_state = "veteran_2"
+	else
+		icon_state = "veteran_1"

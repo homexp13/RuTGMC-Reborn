@@ -113,6 +113,10 @@
 	storage_slots = 21 //can hold 3 "rows" of very limited medical equipment, but it *should* give a decent boost to squad medics.
 	max_storage_space = 42
 	max_w_class = WEIGHT_CLASS_SMALL
+	bypass_w_limit = list(
+		/obj/item/stack/medical/heal_pack/advanced/burn_combat_pack,
+		/obj/item/stack/medical/heal_pack/advanced/bruise_combat_pack,
+	)
 	can_hold = list(
 		/obj/item/healthanalyzer,
 		/obj/item/reagent_containers/glass/bottle,
@@ -139,10 +143,9 @@
 	new /obj/item/storage/pill_bottle/inaprovaline(src)
 	new /obj/item/storage/pill_bottle/isotonic(src)
 	new /obj/item/storage/pill_bottle/spaceacillin(src)
-	new /obj/item/storage/pill_bottle/alkysine(src)
-	new /obj/item/storage/pill_bottle/imidazoline(src)
-	new /obj/item/storage/pill_bottle/quickclot(src)
+	new /obj/item/storage/pill_bottle/imialky(src)
 	new /obj/item/storage/pill_bottle/hypervene(src)
+	new /obj/item/stack/medical/splint(src)
 	new /obj/item/stack/medical/splint(src)
 	new /obj/item/stack/medical/splint(src)
 	new /obj/item/stack/medical/heal_pack/advanced/burn_pack(src)
@@ -310,7 +313,6 @@
 	new /obj/item/storage/pill_bottle/spaceacillin(src)
 	new /obj/item/storage/pill_bottle/alkysine(src)
 	new /obj/item/storage/pill_bottle/imidazoline(src)
-	new /obj/item/storage/pill_bottle/quickclot(src)
 	new /obj/item/storage/pill_bottle/hypervene(src)
 	new /obj/item/bodybag/cryobag(src)
 	new /obj/item/roller(src)
@@ -358,6 +360,7 @@
 	new /obj/item/reagent_containers/glass/bottle/kelotane(src)
 	new /obj/item/reagent_containers/glass/bottle/tramadol(src)
 	new /obj/item/reagent_containers/glass/bottle/tricordrazine(src)
+	new /obj/item/reagent_containers/glass/bottle/combatmix(src)
 	new /obj/item/reagent_containers/hypospray/advanced/big/bicaridine(src)
 	new /obj/item/reagent_containers/hypospray/advanced/big/kelotane(src)
 	new /obj/item/reagent_containers/hypospray/advanced/big/tramadol(src)
@@ -367,7 +370,6 @@
 	new /obj/item/reagent_containers/hypospray/advanced/big/inaprovaline(src)
 	new /obj/item/reagent_containers/hypospray/advanced/big/isotonic(src)
 	new /obj/item/reagent_containers/hypospray/advanced/big/spaceacillin(src)
-	new /obj/item/reagent_containers/hypospray/advanced/big/quickclot(src)
 	new /obj/item/reagent_containers/hypospray/advanced/imialky(src)
 	new /obj/item/reagent_containers/hypospray/advanced/hypervene(src)
 	new /obj/item/healthanalyzer(src)
@@ -862,10 +864,10 @@
 /obj/item/storage/belt/shotgun/martini
 	name = "martini henry ammo belt"
 	desc = "A belt good enough for holding all your .577/400 ball rounds."
-	icon_state = ".557_belt"
+	icon_state = "martini_belt"
 	storage_slots = 12
 	max_storage_space = 24
-
+	sprite_slots = 6
 	draw_mode = 1
 
 	flags_atom = DIRLOCK
@@ -873,15 +875,6 @@
 /obj/item/storage/belt/shotgun/martini/Initialize(mapload, ...)
 	. = ..()
 	update_icon()
-
-/obj/item/storage/belt/shotgun/martini/update_icon()
-	if(!length(contents))
-		icon_state = initial(icon_state) + "_e"
-		return
-	icon_state = initial(icon_state)
-
-	var/holding = round((length(contents) + 1) / 2)
-	setDir(holding + round(holding/3))
 
 /obj/item/storage/belt/shotgun/martini/attackby(obj/item/I, mob/user, params)
 	if(istype(I, /obj/item/ammo_magazine))
@@ -949,6 +942,10 @@
 	max_w_class = WEIGHT_CLASS_NORMAL
 	max_storage_space = 27
 	can_hold = list(/obj/item/explosive/grenade)
+
+/obj/item/storage/belt/grenade/Initialize(mapload)
+	. = ..()
+	AddComponent(/datum/component/tac_reload_storage)
 
 /obj/item/storage/belt/grenade/standard/Initialize(mapload)
 	. = ..()
@@ -1035,3 +1032,47 @@
 	. = ..()
 	for(var/i in 1 to storage_slots)
 		new /obj/item/reagent_containers/food/snacks/protein_pack(src)
+
+/obj/item/storage/holster/belt/revolver/t500
+	name = "\improper BM500 pattern BF revolver holster rig"
+	desc = "The BM500 is the special modular belt for R-500 BF revolver."
+	icon = 'icons/obj/clothing/belts.dmi'
+	icon_state = "t500_holster"
+	max_storage_space = 17
+	bypass_w_limit = list(
+		/obj/item/weapon/gun/revolver/t500,
+	)
+	can_hold = list(
+		/obj/item/weapon/gun/revolver/t500,
+		/obj/item/ammo_magazine/revolver/t500,
+		/obj/item/ammo_magazine/packet/t500,
+	)
+
+/obj/item/storage/belt/mortar_belt
+	name = "TA-10 mortar belt"
+	desc = "A belt that holds a TA-10 50mm Mortar, rangefinder and a lot of ammo for it."
+	icon = 'icons/obj/clothing/belts.dmi'
+	icon_state = "kneemortar_holster"
+	item_state = "m4a3_holster"
+	use_sound = null
+	w_class = WEIGHT_CLASS_BULKY
+	storage_type_limits = list(
+		/obj/item/mortar_kit/knee = 1,
+		/obj/item/binoculars = 1,
+		/obj/item/compass = 1,
+	)
+	storage_slots = 24
+	max_storage_space = 49
+	max_w_class = 3
+
+	can_hold = list(
+		/obj/item/mortar_kit/knee,
+		/obj/item/mortal_shell/knee,
+		/obj/item/compass,
+		/obj/item/binoculars,
+	)
+
+/obj/item/storage/belt/mortar_belt/full/Initialize()
+	. = ..()
+	new /obj/item/mortar_kit/knee(src)
+	new /obj/item/binoculars/tactical/range(src)

@@ -276,11 +276,45 @@
 	name = "\improper lightweight IMP backpack"
 	desc = "The standard-issue pack of the TGMC forces. Designed to slug gear into the battlefield."
 
+/obj/item/storage/backpack/marine/standard/molle
+	name = "\improper T16 MOLLE Backpack"
+	desc = "The latest backpack developed by Crowford Armory Union on the military order of TGMC. Thanks to the introduction of new MOLLE fastening systems, it turned out to beltbags and backpacks that are not inferior to roominess and portable weight, while also reducing the size of backpacks that have gone to hang from the back on the belt."
+	icon = 'icons/obj/items/storage/storage.dmi'
+	item_icons = list(
+		slot_back_str = 'icons/mob/clothing/back.dmi',
+		slot_l_hand_str = 'icons/mob/inhands/equipment/backpacks_left.dmi',
+		slot_r_hand_str = 'icons/mob/inhands/equipment/backpacks_right.dmi',
+	)
+	icon_state = "MOLLEbackpack"
+	item_state = "MOLLEbackpack"
+
+/obj/item/storage/backpack/marine/satchel/molle
+	name = "\improper T13 MOLLE Satchel"
+	desc = "The latest satchel developed by Crowford Armory Union on the military order of TGMC. Thanks to the introduction of new MOLLE fastening systems, it turned out to beltbags and backpacks that are not inferior to roominess and portable weight, while also reducing the size of backpacks that have gone to hang from the back on the belt."
+	icon = 'icons/obj/items/storage/storage.dmi'
+	item_icons = list(
+		slot_back_str = 'icons/mob/clothing/back.dmi',
+		slot_l_hand_str = 'icons/mob/inhands/equipment/backpacks_left.dmi',
+		slot_r_hand_str = 'icons/mob/inhands/equipment/backpacks_right.dmi',
+	)
+	icon_state = "MOLLEbeltbag"
+	item_state = "MOLLEbeltbag"
+
+/obj/item/storage/backpack/marine/standard/scav
+	name = "Scav Backpack"
+	desc = "Pretty swag backpack."
+	icon = 'icons/obj/items/storage/storage.dmi'
+	item_icons = list(
+		slot_back_str = 'icons/mob/clothing/back.dmi')
+	icon_state = "scavpack"
+	item_state = "scavpack"
+
 /obj/item/storage/backpack/marine/corpsman
 	name = "\improper TGMC corpsman backpack"
 	desc = "The standard-issue backpack worn by TGMC corpsmen. You can recharge defibrillators by plugging them in."
 	icon_state = "marinepackm"
 	item_state = "marinepackm"
+	icon = 'icons/obj/items/storage/storage.dmi'
 	var/obj/item/cell/high/cell //Starts with a high capacity energy cell.
 	var/icon_skin
 
@@ -295,12 +329,12 @@
 	if(amount > cell.charge)
 		playsound(src, 'sound/machines/buzz-two.ogg', 25, 1)
 		if(cell.charge)
-			warning = "<span class='warning'>[src]'s defibrillator recharge unit buzzes a warning, its battery only having enough power to partially recharge the defibrillator for [cell.charge] amount. "
+			warning = span_warning("[src]'s defibrillator recharge unit buzzes a warning, its battery only having enough power to partially recharge the defibrillator for [cell.charge] amount. ")
 		else
-			warning = "<span class='warning'>[src]'s defibrillator recharge unit buzzes a warning, as its battery is completely depleted of charge. "
+			warning = span_warning("[src]'s defibrillator recharge unit buzzes a warning, as its battery is completely depleted of charge. ")
 	else
 		playsound(src, 'sound/machines/ping.ogg', 25, 1)
-		warning = "<span class='notice'>[src]'s defibrillator recharge unit cheerfully pings as it successfully recharges the defibrillator. "
+		warning = span_notice("[src]'s defibrillator recharge unit cheerfully pings as it successfully recharges the defibrillator. ")
 	cell.charge -= min(cell.charge, amount)
 	if(mention_charge)
 		to_chat(user, span_notice("[warning]<b>Charge Remaining: [cell.charge]/[cell.maxcharge]</b>"))
@@ -314,6 +348,7 @@
 		. += span_warning("Its defibrillator recharge unit does not have a power cell installed!")
 
 /obj/item/storage/backpack/marine/corpsman/update_icon_state()
+	. = ..()
 	icon_state = icon_skin
 	if(cell?.charge >= 0)
 		switch(PERCENT(cell.charge/cell.maxcharge))
@@ -384,7 +419,7 @@
 	access_delay = 0
 
 /obj/item/storage/backpack/marine/satchel/green
-	name = "\improper TGMC satchel"
+	name = "\improper Green TGMC satchel"
 	icon_state = "marinesat_green"
 
 
@@ -422,13 +457,13 @@
 //CLOAKS
 
 /obj/item/storage/backpack/marine/satchel/officer_cloak
-	name = "Officer Cloak"
+	name = "Officer Cloak - Blue"
 	desc = "A dashing cloak as befitting an officer."
 	icon_state = "officer_cloak" //with thanks to Baystation12
 	item_state = "officer_cloak" //with thanks to Baystation12
 
 /obj/item/storage/backpack/marine/satchel/captain_cloak
-	name = "Captain's Cloak"
+	name = "Captain's Cloak - Blue"
 	desc = "An opulent cloak detailed with your many accomplishments."
 	icon_state = "commander_cloak" //with thanks to Baystation12
 	item_state = "commander_cloak" //with thanks to Baystation12
@@ -439,12 +474,24 @@
 	icon_state = "officer_cloak_red" //with thanks to Baystation12
 	item_state = "officer_cloak_red" //with thanks to Baystation12
 
+/obj/item/storage/backpack/marine/satchel/officer_cloak_red/alt
+	name = "Senior Officer Cloak"
+	icon = 'icons/obj/items/storage/storage.dmi'
+	item_icons = list(
+		slot_back_str = 'icons/mob/clothing/back.dmi')
+	icon_state = "officer_cloak_red_alt"
+
 /obj/item/storage/backpack/marine/satchel/captain_cloak_red
 	name = "Captain's Cloak - Red"
 	desc = "An opulent cloak detailed with your many accomplishments, with fancy red trim."
 	icon_state = "commander_cloak_red" //with thanks to Baystation12
 	item_state = "commander_cloak_red" //with thanks to Baystation12
 
+/obj/item/storage/backpack/marine/satchel/captain_cloak_red/white
+	icon = 'icons/obj/items/storage/storage.dmi'
+	icon_state = "white_com"
+	item_icons = list(
+		slot_back_str = 'icons/mob/clothing/back.dmi')
 
 // Scout Cloak
 /obj/item/storage/backpack/marine/satchel/scout_cloak
@@ -482,18 +529,18 @@
 	camouflage()
 
 /obj/item/storage/backpack/marine/satchel/scout_cloak/proc/camouflage()
-	if (usr.incapacitated(TRUE))
+	if(usr.incapacitated(TRUE))
 		return
 
 	var/mob/living/carbon/human/M = usr
-	if (!istype(M))
+	if(!istype(M))
 		return
 
-	if (M.back != src)
-		to_chat(M, "<span class='warning'>You must be wearing the cloak to activate it!")
+	if(M.back != src)
+		to_chat(M, span_warning("You must be wearing the cloak to activate it!"))
 		return
 
-	if (camo_active)
+	if(camo_active)
 		camo_off(usr)
 		return
 
@@ -502,7 +549,7 @@
 		return FALSE
 
 	if (camo_cooldown_timer)
-		to_chat(M, "<span class='warning'>Your thermal cloak is still recalibrating! It will be ready in [(camo_cooldown_timer - world.time) * 0.1] seconds.")
+		to_chat(M, span_warning("Your thermal cloak is still recalibrating! It will be ready in [(camo_cooldown_timer - world.time) * 0.1] seconds."))
 		return
 
 	camo_active = TRUE
@@ -583,7 +630,7 @@
 	var/cooldown = round( (initial(camo_energy) - camo_energy) / SCOUT_CLOAK_INACTIVE_RECOVERY * 10) //Should be 20 seconds after a full depletion with inactive recovery at 5
 	if(cooldown)
 		camo_cooldown_timer = world.time + cooldown //recalibration and recharge time scales inversely with charge remaining
-		to_chat(user, "<span class='warning'>Your thermal cloak is recalibrating! It will be ready in [(camo_cooldown_timer - world.time) * 0.1] seconds.")
+		to_chat(user, span_warning("Your thermal cloak is recalibrating! It will be ready in [(camo_cooldown_timer - world.time) * 0.1] seconds."))
 		process_camo_cooldown(user, cooldown)
 
 	UnregisterSignal(user, list(

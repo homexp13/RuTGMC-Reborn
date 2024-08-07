@@ -1,5 +1,3 @@
-
-//Bartender
 /obj/item/clothing/head/chefhat
 	name = "chef's hat"
 	desc = "It's a hat used by chefs to keep hair out of your food. Judging by the food in the mess, they don't work."
@@ -7,15 +5,7 @@
 	item_state = "chefhat"
 	desc = "The commander in chef's head wear."
 	siemens_coefficient = 0.9
-
-//Captain: This probably shouldn't be space-worthy
-/obj/item/clothing/head/caphat
-	name = "captain's hat"
-	icon_state = "captain"
-	desc = "It's good being the king."
-	item_state = "caphat"
-	siemens_coefficient = 0.9
-	anti_hug = 1
+	species_exception = list(/datum/species/robot)
 
 //Captain: This probably shouldn't be space-worthy
 /obj/item/clothing/head/helmet/cap
@@ -29,6 +19,7 @@
 	min_cold_protection_temperature = SPACE_HELMET_MIN_COLD_PROTECTION_TEMPERATURE
 	siemens_coefficient = 0.9
 	flags_armor_protection = NONE
+	species_exception = list(/datum/species/robot)
 
 //Chaplain
 /obj/item/clothing/head/chaplain_hood
@@ -39,6 +30,7 @@
 	flags_inv_hide = HIDEEARS|HIDEALLHAIR
 	siemens_coefficient = 0.9
 	flags_armor_protection = HEAD|EYES
+	species_exception = list(/datum/species/robot)
 
 //Chaplain
 /obj/item/clothing/head/nun_hood
@@ -48,6 +40,7 @@
 	flags_inventory = COVEREYES
 	flags_inv_hide = HIDEEARS|HIDEALLHAIR
 	siemens_coefficient = 0.9
+	species_exception = list(/datum/species/robot)
 
 //Mime
 /obj/item/clothing/head/beret
@@ -55,6 +48,7 @@
 	desc = "A beret, an artists favorite headwear."
 	icon_state = "beret"
 	siemens_coefficient = 0.9
+	species_exception = list(/datum/species/robot)
 	soft_armor = list(MELEE = 15, BULLET = 15, LASER = 15, ENERGY = 15, BOMB = 10, BIO = 5, FIRE = 5, ACID = 5)
 	flags_armor_features = ARMOR_NO_DECAP
 
@@ -85,13 +79,13 @@
 	desc = "A stylish, if purple, beret."
 	icon_state = "purpleberet"
 
-
 //Medical
 /obj/item/clothing/head/surgery
 	name = "surgical cap"
 	desc = "A cap surgeons wear during operations. Keeps their hair from tickling your internal organs."
 	icon_state = "surgcap_blue"
 	flags_inv_hide = HIDETOPHAIR
+	species_exception = list(/datum/species/robot)
 
 /obj/item/clothing/head/surgery/purple
 	desc = "A cap surgeons wear during operations. Keeps their hair from tickling your internal organs. This one is deep purple."
@@ -105,8 +99,6 @@
 	desc = "A cap surgeons wear during operations. Keeps their hair from tickling your internal organs. This one is dark green."
 	icon_state = "surgcap_green"
 
-
-
 //Detective
 
 /obj/item/clothing/head/det_hat
@@ -117,6 +109,7 @@
 	soft_armor = list(MELEE = 50, BULLET = 5, LASER = 25, ENERGY = 10, BOMB = 0, BIO = 0, FIRE = 10, ACID = 10)
 	siemens_coefficient = 0.9
 	flags_armor_protection = NONE
+	species_exception = list(/datum/species/robot)
 
 /obj/item/clothing/head/det_hat/black
 	icon_state = "detective2"

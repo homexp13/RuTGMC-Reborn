@@ -101,7 +101,6 @@
 #define OPTABLE_TRAIT "optable"
 #define TIMESHIFT_TRAIT "timeshift"
 #define BRAIN_TRAIT "brain"
-//#define WIDOW_ABILITY_TRAIT "widow_ability_trait" //RUTGMC DELETION, WIDOW DELETION
 #define PSYCHIC_BLAST_ABILITY_TRAIT "psychic_blast_ability_trait"
 #define PSYCHIC_CRUSH_ABILITY_TRAIT "psychic_crush_ability_trait"
 #define VORTEX_ABILITY_TRAIT "vortex_ability_trait"
@@ -158,6 +157,20 @@
 #define TRAIT_HEAVY_STEP "heavy_step"
 ///indicates this mob was spawned by a corpse spawner
 #define TRAIT_MAPSPAWNED "mapspawned"
+///Banished from the hive by the ruler
+#define TRAIT_BANISHED "banished"
+///Mindmelded with another mob
+#define TRAIT_MINDMELDED "mindmelded"
+///You swing axe good
+#define TRAIT_AXE_EXPERT "axe_expert"
+///You swing sword good
+#define TRAIT_SWORD_EXPERT "sword_expert"
+///Pain reduction light
+#define TRAIT_LIGHT_PAIN_RESIST "light_pain_resist"
+///Pain reduction medium
+#define TRAIT_MEDIUM_PAIN_RESIST "medium_pain_resist"
+///is currently riding an armored vehicle
+#define TRAIT_TANK_DESANT "tank_desant"
 
 /// Prevents usage of manipulation appendages (picking, holding or using items, manipulating storage).
 #define TRAIT_HANDS_BLOCKED "handsblocked"
@@ -169,7 +182,6 @@
 #define TRAIT_LEGLESS "legless" //Has lost all the appendages needed to stay standing up.
 #define TRAIT_NOPLASMAREGEN "noplasmaregen"//xeno plasma wont recharge
 #define TRAIT_UNDEFIBBABLE "undefibbable"//human can't be revived
-// #define TRAIT_HOLLOW "hollowedout" //examine trait for puppeteer
 #define TRAIT_IMMEDIATE_DEFIB "immediate_defib"//immediately revives when defibbed, rather than just healing
 #define TRAIT_HEALING_INFUSION "healing_infusion"//greatly improves natural healing for xenos
 #define TRAIT_PSY_DRAINED "psy_drained"//mob was drained of life force by a xenos
@@ -231,6 +243,8 @@
 
 //this mech is melee core boosted
 #define TRAIT_MELEE_CORE "melee_core"
+///stops tanks from being able to ram this mob
+#define TRAIT_STOPS_TANK_COLLISION "stops_tanks"
 
 //added to escaped humans
 #define TRAIT_HAS_ESCAPED "escaped_marine"
@@ -238,3 +252,10 @@
 
 //added to AIs firing railguns
 #define TRAIT_IS_FIRING_RAILGUN "firing_railgun"
+
+/// Knowledge of Yautja technology
+#define TRAIT_YAUTJA_TECH "t_yautja_tech"
+/// Absolutely RIPPED. Can do misc. heavyweight stuff others can't. (Yautja, Synths)
+#define TRAIT_SUPER_STRONG "t_super_strong"
+/// Foreign biology. Basic medHUDs won't show the mob. (Yautja, Zombies)
+#define TRAIT_FOREIGN_BIO "t_foreign_bio"

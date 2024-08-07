@@ -108,12 +108,22 @@
 	user.drop_held_item()
 	qdel(src)
 
-/obj/item/ammo_magazine/rocket/update_icon()
-	overlays.Cut()
+/obj/item/ammo_magazine/rocket/update_name(updates)
+	. = ..()
 	if(current_rounds > 0)
 		return
 	name = "empty rocket frame"
+
+/obj/item/ammo_magazine/rocket/update_desc(updates)
+	. = ..()
+	if(current_rounds > 0)
+		return
 	desc = "A spent rocket rube. Activate it to deconstruct it and receive some materials."
+
+/obj/item/ammo_magazine/rocket/update_icon_state()
+	. = ..()
+	if(current_rounds > 0)
+		return
 	icon_state = istype(src, /obj/item/ammo_magazine/rocket/m57a4) ? "quad_rocket_e" : "rocket_e"
 
 //-------------------------------------------------------
@@ -399,8 +409,8 @@
 	flags_magazine = MAGAZINE_WORN
 	w_class = WEIGHT_CLASS_HUGE
 	default_ammo = /datum/ammo/bullet/minigun
-	current_rounds = 500
-	max_rounds = 500
+	current_rounds = 600
+	max_rounds = 600
 	flags_item_map_variant = (ITEM_JUNGLE_VARIANT|ITEM_ICE_VARIANT|ITEM_PRISON_VARIANT)
 
 /obj/item/ammo_magazine/minigun_powerpack/snow
@@ -421,8 +431,8 @@
 	icon_state = "powerpacksg"
 	flags_magazine = MAGAZINE_WORN|MAGAZINE_REFILLABLE
 	default_ammo = /datum/ammo/bullet/smart_minigun
-	current_rounds = 1000
-	max_rounds = 1000
+	current_rounds = 2000
+	max_rounds = 2000
 	caliber = CALIBER_10x26_CASELESS
 	flags_item_map_variant = null
 

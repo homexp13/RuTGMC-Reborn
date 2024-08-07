@@ -30,6 +30,8 @@ Stepping directly on the mine will also blow it up
 	/// Tripwire holds reference to the tripwire obj that is used to trigger an explosion
 	var/obj/effect/mine_tripwire/tripwire
 
+	var/tripwire_triggered = FALSE
+
 /obj/item/explosive/mine/Initialize(mapload)
 	. = ..()
 	var/static/list/connections = list(
@@ -42,7 +44,8 @@ Stepping directly on the mine will also blow it up
 	return ..()
 
 /// Update the icon, adding "_armed" if appropriate to the icon_state.
-/obj/item/explosive/mine/update_icon()
+/obj/item/explosive/mine/update_icon_state()
+	. = ..()
 	icon_state = "[initial(icon_state)][armed ? "_armed" : ""]"
 
 /// On explosion mines trigger their own explosion, assuming there were not deleted straight away (larger explosions or probability)
@@ -109,12 +112,12 @@ Stepping directly on the mine will also blow it up
 	span_notice("You start disarming [src]."))
 
 	if(!do_after(user, 8 SECONDS, NONE, src, BUSY_ICON_FRIENDLY))
-		user.visible_message("<span class='warning'>[user] stops disarming [src].", \
-		"<span class='warning'>You stop disarming [src].")
+		user.visible_message(span_warning("[user] stops disarming [src]."), \
+		span_warning("You stop disarming [src]."))
 		return
 
-	user.visible_message("<span class='notice'>[user] finishes disarming [src].", \
-	"<span class='notice'>You finish disarming [src].")
+	user.visible_message(span_notice("[user] finishes disarming [src]."), \
+	span_notice("You finish disarming [src]."))
 	anchored = FALSE
 	armed = FALSE
 	update_icon()
@@ -162,15 +165,15 @@ Stepping directly on the mine will also blow it up
 	return TRUE
 
 /// Alien attacks trigger the explosive to instantly detonate
-/obj/item/explosive/mine/attack_alien(mob/living/carbon/xenomorph/X, damage_amount = X.xeno_caste.melee_damage, damage_type = BRUTE, damage_flag = "", effects = TRUE, armor_penetration = 0, isrightclick = FALSE)
-	if(X.status_flags & INCORPOREAL)
+/obj/item/explosive/mine/attack_alien(mob/living/carbon/xenomorph/xeno_attacker, damage_amount = xeno_attacker.xeno_caste.melee_damage, damage_type = BRUTE, damage_flag = MELEE, effects = TRUE, armor_penetration = 0, isrightclick = FALSE)
+	if(xeno_attacker.status_flags & INCORPOREAL)
 		return FALSE
 	if(triggered) //Mine is already set to go off
 		return
 
-	if(X.a_intent == INTENT_HELP)
+	if(xeno_attacker.a_intent == INTENT_HELP)
 		return
-	X.visible_message(span_danger("[X] has slashed [src]!"), \
+	xeno_attacker.visible_message(span_danger("[xeno_attacker] has slashed [src]!"), \
 	span_danger("We slash [src]!"))
 	playsound(loc, 'sound/weapons/slice.ogg', 25, 1)
 	INVOKE_ASYNC(src, PROC_REF(trigger_explosion))
@@ -180,7 +183,8 @@ Stepping directly on the mine will also blow it up
 	if(triggered)
 		return
 	triggered = TRUE
-	explosion(tripwire ? tripwire.loc : loc, light_impact_range = 3)
+	create_shrapnel(tripwire_triggered ? tripwire.loc : loc, 8, dir, shrapnel_type = /datum/ammo/bullet/shrapnel/metal, on_hit_coefficient = 45)
+	cell_explosion(tripwire_triggered ? tripwire.loc : loc, 50, 20)
 	QDEL_NULL(tripwire)
 	qdel(src)
 
@@ -204,7 +208,6 @@ Stepping directly on the mine will also blow it up
 	linked_mine = null
 	return ..()
 
-/* RUTGMC DELETION
 /// When crossed the tripwire triggers the linked mine
 /obj/effect/mine_tripwire/proc/on_cross(datum/source, atom/movable/AM, oldloc, oldlocs)
 	SIGNAL_HANDLER
@@ -223,8 +226,8 @@ Stepping directly on the mine will also blow it up
 
 	if(!isliving(AM) && !(isvehicle(AM)))
 		return
+	linked_mine.tripwire_triggered = TRUE
 	linked_mine.trip_mine(AM)
-*/
 
 /// PMC specific mine, with IFF for PMC units
 /obj/item/explosive/mine/pmc

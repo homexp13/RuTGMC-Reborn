@@ -201,16 +201,8 @@
 
 // Explosion damage.
 /obj/effect/plantsegment/ex_act(severity)
-	switch(severity)
-		if(EXPLODE_DEVASTATE)
-			die()
-		if(EXPLODE_HEAVY)
-			if (prob(90))
-				die()
-		if(EXPLODE_LIGHT)
-			if (prob(50))
-				die()
-
+	if(prob(severity / 2))
+		die()
 
 // Hotspots kill vines.
 /obj/effect/plantsegment/fire_act(null, temp, volume)
@@ -228,22 +220,6 @@
 
 	if(prob(30))
 		age++
-
-	var/turf/T = loc
-	if(!loc)
-		return
-
-	var/pressure = T.return_pressure()
-	var/temperature = T.return_temperature()
-
-	if(pressure < seed.lowkpa_tolerance || pressure > seed.highkpa_tolerance)
-		die()
-		return
-
-	if(abs(temperature - seed.ideal_heat) > seed.heat_tolerance)
-		die()
-		return
-
 
 /obj/effect/plantsegment/flamer_fire_act(burnlevel)
 	qdel(src)

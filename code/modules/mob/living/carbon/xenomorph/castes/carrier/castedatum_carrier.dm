@@ -25,16 +25,15 @@
 
 	// *** Evolution *** //
 	evolution_threshold = 225
-	// upgrade_threshold = TIER_TWO_THRESHOLD // RUTGMC DELETION
 
 	deevolves_to = /mob/living/carbon/xenomorph/drone
 
-	//evolves_to = list(/mob/living/carbon/xenomorph/defiler, /mob/living/carbon/xenomorph/widow) // RUTGMC DELETION, WIDOW DELETION, moved to modular
+	evolves_to = list(/mob/living/carbon/xenomorph/defiler, /mob/living/carbon/xenomorph/gorger,)
 
 	// *** Flags *** //
 	caste_flags = CASTE_EVOLUTION_ALLOWED
 	can_hold_eggs = CAN_HOLD_ONE_HAND
-	can_flags = CASTE_CAN_BE_QUEEN_HEALED|CASTE_CAN_HOLD_FACEHUGGERS|CASTE_CAN_BE_GIVEN_PLASMA|CASTE_CAN_BE_LEADER
+	can_flags = CASTE_CAN_BE_QUEEN_HEALED|CASTE_CAN_HOLD_FACEHUGGERS|CASTE_CAN_BE_GIVEN_PLASMA|CASTE_CAN_BE_LEADER|CASTE_CAN_HOLD_JELLY
 	caste_traits = null
 
 	// *** Defense *** //
@@ -67,6 +66,7 @@
 		/datum/action/ability/xeno_action/pheromones/emit_frenzy,
 		/datum/action/ability/xeno_action/carrier_panic,
 		/datum/action/ability/xeno_action/choose_hugger_type,
+		/datum/action/ability/xeno_action/set_hugger_reserve,
 	)
 
 /datum/xeno_caste/carrier/normal
@@ -95,5 +95,6 @@
 		/datum/action/ability/xeno_action/pheromones/emit_frenzy,
 		/datum/action/ability/xeno_action/carrier_panic,
 		/datum/action/ability/xeno_action/choose_hugger_type,
+		/datum/action/ability/xeno_action/set_hugger_reserve,
 		/datum/action/ability/xeno_action/build_hugger_turret,
 	)

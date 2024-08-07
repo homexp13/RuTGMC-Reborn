@@ -25,6 +25,11 @@
 #define DIRT_TYPE_SNOW 3
 #define DIRT_TYPE_LAVALAND 4
 
+///How many variations of bullethole patterns there are
+#define BULLETHOLE_STATES 10
+///Maximum possible bullet holes in a closed turf
+#define BULLETHOLE_MAX 24 
+
 //wet floors
 
 #define FLOOR_WET_WATER 1
@@ -144,3 +149,10 @@ GLOBAL_VAR_INIT(global_unique_id, 1)
 
 // shorter way to write as anything
 #define AS as anything
+
+// What kind of function to use for Explosions falling off.
+#define EXPLOSION_FALLOFF_SHAPE_LINEAR 1
+#define EXPLOSION_FALLOFF_SHAPE_EXPONENTIAL 2
+#define EXPLOSION_FALLOFF_SHAPE_EXPONENTIAL_HALF 3
+
+#define EXPLOSION_MAX_POWER 5000

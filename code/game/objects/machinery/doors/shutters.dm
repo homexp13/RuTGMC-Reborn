@@ -55,7 +55,8 @@
 	operating = FALSE
 
 
-/obj/machinery/door/poddoor/shutters/update_icon()
+/obj/machinery/door/poddoor/shutters/update_icon_state()
+	. = ..()
 	if(operating)
 		return
 	icon_state = "shutter[density]"
@@ -91,6 +92,10 @@
 
 /obj/machinery/door/poddoor/shutters/opened/wy
 	id = "wyoffice"
+
+/obj/machinery/door/poddoor/shutters/opened/corporate
+	name = "\improper Privacy Shutters"
+	id = "cl_shutters"
 
 /obj/machinery/door/poddoor/shutters/mainship
 	icon = 'icons/obj/doors/mainship/blastdoors_shutters.dmi'
@@ -129,6 +134,9 @@
 	name = "Self Destruct Lockdown"
 	id = "sd_lockdown"
 	resistance_flags = RESIST_ALL
+
+/obj/machinery/door/poddoor/shutters/mainship/selfdestruct/get_explosion_resistance()
+	return density ? 5000 : 0
 
 /obj/machinery/door/poddoor/shutters/mainship/open/hangar
 	name = "\improper Hangar Shutters"

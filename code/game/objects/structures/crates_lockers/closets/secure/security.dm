@@ -23,7 +23,6 @@
 	new /obj/item/clothing/head/helmet/swat(src)
 	new /obj/item/clothing/shoes/brown(src)
 	new /obj/item/clothing/gloves/captain(src)
-	new /obj/item/clothing/suit/space/captain(src)
 	new /obj/item/weapon/telebaton(src)
 	new /obj/item/clothing/under/dress/dress_cap(src)
 	new /obj/item/clothing/head/helmet/formalcaptain(src)
@@ -198,29 +197,6 @@
 	new /obj/item/clothing/head/soft/sec/corp(src)
 	new /obj/item/clothing/under/rank/security/corp(src)
 
-
-/obj/structure/closet/secure_closet/security/cargo/PopulateContents()
-	. = ..()
-	new /obj/item/clothing/tie/armband/cargo(src)
-
-
-/obj/structure/closet/secure_closet/security/engine/PopulateContents()
-	. = ..()
-	new /obj/item/clothing/tie/armband/engine(src)
-	new /obj/item/encryptionkey/engi(src)
-
-
-/obj/structure/closet/secure_closet/security/science/PopulateContents()
-	. = ..()
-	new /obj/item/clothing/tie/armband/science(src)
-
-
-/obj/structure/closet/secure_closet/security/med/PopulateContents()
-	. = ..()
-	new /obj/item/clothing/tie/armband/medgreen(src)
-	new /obj/item/encryptionkey/med(src)
-
-
 /obj/structure/closet/secure_closet/security_empty
 	name = "Security Officer's Locker"
 	req_access = list(ACCESS_MARINE_BRIG)
@@ -271,7 +247,8 @@
 	new /obj/item/armor_module/storage/uniform/holster/armpit(src)
 
 
-/obj/structure/closet/secure_closet/detective/update_icon()
+/obj/structure/closet/secure_closet/detective/update_icon_state()
+	. = ..()
 	if(broken)
 		icon_state = icon_broken
 	else
@@ -356,7 +333,8 @@
 	large = FALSE
 
 
-/obj/structure/closet/secure_closet/wall/update_icon()
+/obj/structure/closet/secure_closet/wall/update_icon_state()
+	. = ..()
 	if(broken)
 		icon_state = icon_broken
 	else

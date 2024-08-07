@@ -188,6 +188,7 @@
 /obj/item/armor_module/storage/general/som
 	name = "General Purpose Storage module"
 	desc = "Designed for mounting on SOM combat armor. Certainly not as specialised as any other storage modules, but definitely able to hold some larger things, like pistols or magazines."
+	icon = 'icons/mob/modular/som_armor_modules.dmi'
 	icon_state = "mod_general_bag_som"
 	item_state = "mod_general_bag_som_a"
 
@@ -280,15 +281,14 @@
 		/obj/item/detpack,
 		/obj/item/circuitboard,
 		/obj/item/lightreplacer,
-		//RUTGMC EDIT ADDITION  BEGIN - SOLDERING_TOOL
 		/obj/item/tool/surgery/solderingtool,
-		//RUTGMC EDIT ADDITION  END
 	)
 	cant_hold = list()
 
 /obj/item/armor_module/storage/engineering/som
 	name = "Engineering Storage module"
 	desc = "Designed for mounting on SOM combat armor. Can hold about as much as a tool pouch, and sometimes small spools of things like barbed wire, or an entrenching tool."
+	icon = 'icons/mob/modular/som_armor_modules.dmi'
 	icon_state = "mod_engineer_bag_som"
 	item_state = "mod_engineer_bag_som_a"
 
@@ -329,14 +329,13 @@
 		/obj/item/tweezers,
 		/obj/item/tweezers_advanced,
 		/obj/item/whistle,
-		//RUTGMC EDIT ADDITION  BEGIN - SOLDERING_TOOL
 		/obj/item/tool/surgery/solderingtool,
-		//RUTGMC EDIT ADDITION  END
 	)
 
 /obj/item/armor_module/storage/medical/som
 	name = "Medical Storage module"
 	desc = "Designed for mounting on SOM combat armor. Can hold a substantial variety of medical supplies and apparatus, but cannot hold as much as a medkit could."
+	icon = 'icons/mob/modular/som_armor_modules.dmi'
 	icon_state = "mod_medic_bag_som"
 	item_state = "mod_medic_bag_som_a"
 
@@ -347,8 +346,8 @@
 	storage = /obj/item/storage/internal/modular/injector
 
 /obj/item/storage/internal/modular/injector
-	max_storage_space = 10
-	storage_slots = 10
+	max_storage_space = 14
+	storage_slots = 14
 	max_w_class = WEIGHT_CLASS_TINY
 	can_hold = list(
 		/obj/item/reagent_containers/syringe,

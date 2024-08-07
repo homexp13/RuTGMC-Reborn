@@ -5,7 +5,7 @@
 	else if(isgrabitem(dropping))
 		var/obj/item/grab/grab_item = dropping
 		if(isliving(grab_item.grabbed_thing))
-		
+
 			. = grab_item.grabbed_thing
 	if(. && user_buckle_mob(., user))
 		return TRUE
@@ -61,6 +61,7 @@
 	if(buckle_lying != -1)
 		ADD_TRAIT(buckling_mob, TRAIT_FLOORED, BUCKLE_TRAIT)
 	buckling_mob.throw_alert("buckled", /atom/movable/screen/alert/restrained/buckled)
+	buckling_mob.set_glide_size(glide_size)
 	post_buckle_mob(buckling_mob, silent)
 
 	RegisterSignal(buckling_mob, COMSIG_LIVING_DO_RESIST, PROC_REF(resisted_against))
@@ -87,6 +88,7 @@
 	if(buckle_lying != -1)
 		REMOVE_TRAIT(buckled_mob, TRAIT_FLOORED, BUCKLE_TRAIT)
 	buckled_mob.clear_alert("buckled")
+	buckled_mob.set_glide_size(DELAY_TO_GLIDE_SIZE(buckled_mob.cached_multiplicative_slowdown))
 	LAZYREMOVE(buckled_mobs, buckled_mob)
 
 	UnregisterSignal(buckled_mob, COMSIG_LIVING_DO_RESIST)
@@ -170,9 +172,7 @@
 		return FALSE
 	return TRUE
 
-/* //RUTGMC EDIT - Moved to modular_RUtgmc\code\game\buckling.dm
 /mob/living/carbon/xenomorph/user_can_buckle(mob/living/buckling_mob)
-	if(buckling_mob.stat)
+	if(buckling_mob.stat == DEAD)
 		return FALSE
 	return ..()
-*/

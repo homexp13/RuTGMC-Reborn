@@ -168,7 +168,7 @@ GLOBAL_LIST_EMPTY(blood_particles)
 
 	var/marker_flags = GLOB.faction_to_minimap_flag[faction]
 	if(marker_flags)
-		SSminimaps.add_marker(src, marker_flags, image('modular_RUtgmc/icons/UI_icons/map_blips_large.dmi', null, icon_state_on, VERY_HIGH_FLOAT_LAYER))
+		SSminimaps.add_marker(src, marker_flags, image('icons/UI_icons/map_blips_large.dmi', null, icon_state_on, VERY_HIGH_FLOAT_LAYER))
 	set_visuals(faction)
 
 /obj/effect/temp_visual/order/attack_order
@@ -224,13 +224,6 @@ GLOBAL_LIST_EMPTY(blood_particles)
 	icon_state = "anom"
 	layer = ABOVE_LYING_MOB_LAYER
 	duration = 0.5 SECONDS
-
-/obj/effect/temp_visual/banishment_portal
-	name = "banishment portal"
-	icon = 'icons/obj/objects.dmi'
-	icon_state = "bhole3"
-	layer = ABOVE_LYING_MOB_LAYER
-	duration = WRAITH_BANISH_BASE_DURATION+1 //So we don't delete our contents early
 
 /obj/effect/temp_visual/acid_splatter
 	name = "acid_splatter"

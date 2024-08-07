@@ -45,6 +45,9 @@ These act as a respawn mechanic growning a body and offering it up to ghosts.
 	var/obj/machinery/cloning/vats/linked_machine
 	var/obj/item/radio/headset/mainship/mcom/radio //God forgive me
 
+/obj/machinery/computer/cloning_console/vats/attack_ai(mob/living/user)
+	return attack_hand(user)
+
 /obj/machinery/computer/cloning_console/vats/Initialize(mapload)
 	. = ..()
 	radio = new(src)
@@ -68,7 +71,7 @@ These act as a respawn mechanic growning a body and offering it up to ghosts.
 
 	if(!linked_machine)
 		// Try to find the machine nearby
-		linked_machine = locate() in orange(1, src)
+		linked_machine = locate() in get_step(src, REVERSE_DIR(dir))
 		if(!linked_machine)
 			visible_message("[icon2html(src, viewers(src))] <span><b>[src]</b> beeps in error, 'Connection not available'.</span>")
 			return TRUE
@@ -115,6 +118,14 @@ These act as a respawn mechanic growning a body and offering it up to ghosts.
 	beaker = new /obj/item/reagent_containers/glass/beaker/biomass
 	update_icon()
 
+/obj/machinery/cloning/vats/attack_ghost(mob/dead/observer/user)
+	. = ..()
+	if(!occupant)
+		return FALSE
+	if(tgui_alert(user, "Do you want to become a clone?", "Become a clone", list("Yes", "No")) != "Yes")
+		return FALSE
+	occupant.take_over(user)
+	return TRUE
 
 /obj/machinery/cloning/vats/Destroy()
 	if(timerid)
@@ -207,6 +218,7 @@ These act as a respawn mechanic growning a body and offering it up to ghosts.
 		set_light(0)
 
 /obj/machinery/cloning/vats/update_icon_state()
+	. = ..()
 	if(!beaker)
 		icon_state = "cell_0"
 		return
@@ -276,3 +288,13 @@ You are weak, best rest up and get your strength before fighting.</span>"})
 	linked_console.radio.talk_into(src, "<b>New clone: [occupant] has been grown in [src] at: [get_area(src)]. Please move the fresh clone to a squad using the squad distribution console.</b>", RADIO_CHANNEL_COMMAND)
 	occupant = null
 	update_icon()
+
+/obj/machinery/cloning/vats/apc
+	grow_timer = 8 MINUTES
+	pixel_y = 16
+	dir = NORTH
+
+/obj/machinery/cloning/vats/apc/south
+	pixel_y = -16
+	dir = SOUTH
+	layer = BELOW_OBJ_LAYER

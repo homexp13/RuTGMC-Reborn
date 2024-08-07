@@ -1,4 +1,3 @@
-
 /obj/item/clothing/glasses
 	name = "glasses"
 	icon = 'icons/obj/clothing/glasses.dmi'
@@ -7,13 +6,13 @@
 		slot_r_hand_str = 'icons/mob/inhands/clothing/glasses_right.dmi',
 	)
 	w_class = WEIGHT_CLASS_SMALL
-	var/prescription = FALSE
-	var/toggleable = FALSE
 	active = TRUE
 	flags_inventory = COVEREYES
 	flags_equip_slot = ITEM_SLOT_EYES
 	flags_armor_protection = EYES
-	var/deactive_state = "degoggles"
+	var/prescription = FALSE
+	var/toggleable = FALSE
+	var/deactive_state = "deactived_goggles"
 	var/vision_flags = NONE
 	var/darkness_view = 2 //Base human is 2
 	var/invis_view = SEE_INVISIBLE_LIVING
@@ -100,24 +99,20 @@
 		qdel(I)
 		qdel(src)
 		user.put_in_hands(P)
+	if(istype(I, /obj/item/clothing/glasses/night/imager_goggles))
+		var/obj/item/clothing/glasses/night/imager_goggles/eyepatch/P = new
+		to_chat(user, span_notice("You fasten the optical scanner to the inside of the eyepatch."))
+		qdel(I)
+		qdel(src)
+		user.put_in_hands(P)
 
-		update_icon(user)
-
+		update_icon()
 
 /obj/item/clothing/glasses/monocle
 	name = "monocle"
 	desc = "Such a dapper eyepiece!"
 	icon_state = "monocle"
 	flags_armor_protection = NONE
-
-/obj/item/clothing/glasses/material
-	name = "optical material scanner"
-	desc = "Very confusing glasses."
-	icon_state = "material"
-	item_state = "glasses"
-	actions_types = list(/datum/action/item_action/toggle)
-	toggleable = 1
-	vision_flags = SEE_OBJS
 
 /obj/item/clothing/glasses/regular
 	name = "\improper regulation prescription glasses"
@@ -136,20 +131,13 @@
 		qdel(src)
 		user.put_in_hands(P)
 
-		update_icon(user)
+		update_icon()
 
 /obj/item/clothing/glasses/regular/hipster
 	name = "prescription glasses"
 	desc = "Made by Uncool. Co."
 	icon_state = "hipster_glasses"
 	item_state = "hipster_glasses"
-
-/obj/item/clothing/glasses/threedglasses
-	desc = "A long time ago, people used these glasses to makes images from screens threedimensional."
-	name = "3D glasses"
-	icon_state = "3d"
-	item_state = "3d"
-	flags_armor_protection = NONE
 
 /obj/item/clothing/glasses/gglasses
 	name = "green glasses"
@@ -168,6 +156,23 @@
 	goggles = TRUE
 	w_class = WEIGHT_CLASS_TINY
 
+/obj/item/clothing/glasses/mgoggles/attackby(obj/item/our_item, mob/user, params)
+	. = ..()
+	if(istype(our_item, /obj/item/clothing/glasses/night/imager_goggles))
+		if(prescription)
+			var/obj/item/clothing/glasses/night/optgoggles/prescription/our_glasses = new
+			to_chat(user, span_notice("You fasten the optical imaging scanner to the inside of the goggles."))
+			qdel(our_item)
+			qdel(src)
+			user.put_in_hands(our_glasses)
+		else
+			var/obj/item/clothing/glasses/night/optgoggles/our_glasses = new
+			to_chat(user, span_notice("You fasten the optical imaging scanner to the inside of the goggles."))
+			qdel(our_item)
+			qdel(src)
+			user.put_in_hands(our_glasses)
+
+		update_icon(user)
 
 /obj/item/clothing/glasses/mgoggles/prescription
 	name = "prescription marine ballistic goggles"
@@ -204,19 +209,16 @@
 			qdel(src)
 			user.put_in_hands(S)
 
-		update_icon(user)
+		update_icon()
 
 /obj/item/clothing/glasses/m42_goggles
 	name = "\improper M42 scout sight"
 	desc = "A headset and goggles system for the M42 Scout Rifle. Allows highlighted imaging of surroundings. Click it to toggle."
-	icon = 'icons/obj/clothing/glasses.dmi'
 	icon_state = "m56_goggles"
 	deactive_state = "m56_goggles_0"
 	vision_flags = SEE_TURFS
 	toggleable = 1
 	actions_types = list(/datum/action/item_action/toggle)
-
-
 
 //welding goggles
 
@@ -237,7 +239,7 @@
 	AddComponent(/datum/component/clothing_tint, TINT_5, TRUE)
 
 /obj/item/clothing/glasses/welding/verb/verbtoggle()
-	set category = "Object"
+	set category = "Object.Clothing"
 	set name = "Adjust welding goggles"
 	set src in usr
 
@@ -317,10 +319,6 @@
 	. = ..()
 	AddComponent(/datum/component/clothing_tint, TINT_BLIND)
 
-/obj/item/clothing/glasses/sunglasses/prescription
-	name = "prescription sunglasses"
-	prescription = TRUE
-
 /obj/item/clothing/glasses/sunglasses/big
 	desc = "Strangely ancient technology used to help provide rudimentary eye cover. Larger than average enhanced shielding blocks many flashes."
 	icon_state = "bigsunglasses"
@@ -355,8 +353,14 @@
 		qdel(I)
 		qdel(src)
 		user.put_in_hands(P)
+	else if(istype(I, /obj/item/clothing/glasses/night/imager_goggles))
+		var/obj/item/clothing/glasses/night/imager_goggles/sunglasses/P = new
+		to_chat(user, span_notice("You fasten the optical imager scaner to the inside of the glasses."))
+		qdel(I)
+		qdel(src)
+		user.put_in_hands(P)
 
-		update_icon(user)
+		update_icon()
 
 /obj/item/clothing/glasses/sunglasses/fake/prescription
 	name = "prescription sunglasses"
@@ -393,13 +397,6 @@
 	icon_state = "sunhud"
 	var/hud_type = DATA_HUD_SECURITY_ADVANCED
 
-/obj/item/clothing/glasses/sunglasses/sechud/eyepiece
-	name = "Security HUD Sight"
-	desc = "A standard eyepiece, but modified to display security information to the user visually. This makes it commonplace among military police, though other models exist."
-	icon_state = "securityhud"
-	item_state = "securityhud"
-
-
 /obj/item/clothing/glasses/sunglasses/sechud/equipped(mob/living/carbon/human/user, slot)
 	if(slot == SLOT_GLASSES)
 		var/datum/atom_hud/H = GLOB.huds[hud_type]
@@ -412,12 +409,6 @@
 			var/datum/atom_hud/H = GLOB.huds[hud_type]
 			H.remove_hud_from(user)
 	..()
-
-
-/obj/item/clothing/glasses/sunglasses/sechud/tactical
-	name = "tactical HUD"
-	desc = "Flash-resistant goggles with inbuilt combat and security information."
-	icon_state = "swatgoggles"
 
 /obj/item/clothing/glasses/sunglasses/aviator
 	name = "aviator sunglasses"
@@ -575,3 +566,71 @@
 /obj/item/clothing/glasses/night_vision/mounted/Initialize(mapload)
 	. = ..()
 	ADD_TRAIT(src, TRAIT_NODROP, NIGHT_VISION_GOGGLES_TRAIT)
+
+/obj/item/clothing/glasses/orange
+	name = "orange glasses"
+	desc = "A pair of orange glasses."
+	icon_state = "orange"
+	item_state = "orange"
+	deactive_state = "orange"
+	species_exception = list(/datum/species/robot)
+
+/obj/item/clothing/glasses/orange/attackby(obj/item/our_item, mob/user, params)
+	. = ..()
+	if(istype(our_item, /obj/item/clothing/glasses/hud/health))
+		var/obj/item/clothing/glasses/hud/orange_glasses/our_glasses = new
+		to_chat(user, span_notice("You fasten the medical hud projector to the inside of the glasses."))
+		qdel(our_item)
+		qdel(src)
+		user.put_in_hands(our_glasses)
+		update_icon(user)
+	else if(istype(our_item, /obj/item/clothing/glasses/night/imager_goggles))
+		var/obj/item/clothing/glasses/night/imager_goggles/orange_glasses/our_glasses = new
+		to_chat(user, span_notice("You fasten the optical imager scaner to the inside of the glasses."))
+		qdel(our_item)
+		qdel(src)
+		user.put_in_hands(our_glasses)
+		update_icon(user)
+	else if(istype(our_item, /obj/item/clothing/glasses/meson))
+		var/obj/item/clothing/glasses/meson/orange_glasses/our_glasses = new
+		to_chat(user, span_notice("You fasten the optical meson scaner to the inside of the glasses."))
+		qdel(our_item)
+		qdel(src)
+		user.put_in_hands(our_glasses)
+		update_icon(user)
+
+/obj/item/clothing/glasses/meson/orange_glasses
+	name = "Orange glasses"
+	desc = "A pair of orange glasses. This pair has been fitted with an optical meson scanner."
+	icon = 'icons/obj/clothing/glasses.dmi'
+	item_icons = list(
+		slot_glasses_str = 'icons/mob/clothing/eyes.dmi')
+	icon_state = "meson_orange"
+	item_state = "meson_orange"
+	deactive_state = "d_orange"
+	prescription = TRUE
+
+/obj/item/clothing/glasses/night/imager_goggles/orange_glasses
+	name = "Orange glasses"
+	desc = "A pair of orange glasses. This pair has been fitted with an internal optical imager scanner."
+	icon = 'icons/obj/clothing/glasses.dmi'
+	item_icons = list(
+		slot_glasses_str = 'icons/mob/clothing/eyes.dmi')
+	icon_state = "optical_orange"
+	item_state = "optical_orange"
+	deactive_state = "d_orange"
+	prescription = TRUE
+
+/obj/item/clothing/glasses/hud/orange_glasses
+	name = "Orange glasses"
+	desc = "A pair of orange glasses. This pair has been fitted with an internal HealthMate HUD projector."
+	icon = 'icons/obj/clothing/glasses.dmi'
+	item_icons = list(
+		slot_glasses_str = 'icons/mob/clothing/eyes.dmi')
+	icon_state = "med_orange"
+	item_state = "med_orange"
+	deactive_state = "d_orange"
+	prescription = TRUE
+	toggleable = TRUE
+	hud_type = DATA_HUD_MEDICAL_ADVANCED
+	actions_types = list(/datum/action/item_action/toggle)

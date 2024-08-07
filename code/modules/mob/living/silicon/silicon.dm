@@ -18,6 +18,7 @@
 
 /mob/living/silicon/Initialize(mapload)
 	. = ..()
+	GLOB.silicon_mobs += src
 	radio = new(src)
 	if(SStts.tts_enabled)
 		voice = pick(SStts.available_speakers)
@@ -25,6 +26,7 @@
 
 /mob/living/silicon/Destroy()
 	QDEL_NULL(radio)
+	GLOB.silicon_mobs -= src
 	return ..()
 
 
@@ -159,20 +161,12 @@
 	flash_act()
 	if(stat == DEAD)
 		return
-	switch(severity)
-		if(EXPLODE_DEVASTATE)
-			adjustBruteLoss(100)
-			adjustFireLoss(100)
-			if(!anchored)
-				gib()
-		if(EXPLODE_HEAVY)
-			adjustBruteLoss(60)
-			adjustFireLoss(60)
-		if(EXPLODE_LIGHT)
-			adjustBruteLoss(30)
-		if(EXPLODE_WEAK)
-			adjustBruteLoss(15)
 
+	if(severity >= EXPLODE_HEAVY && !anchored)
+		gib()
+		return
+
+	adjustBruteLoss(severity)
 	UPDATEHEALTH(src)
 
 

@@ -24,14 +24,15 @@
 		/datum/outfit/job/command/captain,
 		/datum/outfit/job/command/captain/robot,
 	)
-	exp_requirements = XP_REQ_EXPERT
 	exp_type = EXP_TYPE_REGULAR_ALL
+	exp_requirements = XP_REQ_EXPERT
 	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_ISCOMMAND|JOB_FLAG_BOLD_NAME_ON_SELECTION|JOB_FLAG_PROVIDES_SQUAD_HUD|JOB_FLAG_ALWAYS_VISIBLE_ON_MINIMAP|JOB_FLAG_LOUDER_TTS
 	jobworth = list(
 		/datum/job/xenomorph = LARVA_POINTS_SHIPSIDE,
 		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
 		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
 		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
 	)
 	html_description = {"
 		<b>Difficulty</b>: Hard<br /><br />
@@ -60,13 +61,25 @@ Godspeed, captain! And remember, you are not above the law."})
 	var/playtime_mins = user?.client?.get_exp(title)
 	if(!playtime_mins || playtime_mins < 1 )
 		return
+	new_human.dropItemToGround(new_human.head)
 	switch(playtime_mins)
 		if(0 to 1500) // starting
 			new_human.wear_id.paygrade = "O6"
-		if(1501 to 7500) // 25hrs
+			new_human.equip_to_slot_or_del(new /obj/item/clothing/head/beret/marine/captain/black, SLOT_HEAD)
+			new_human.equip_to_slot_or_del(new /obj/item/storage/backpack/marine/satchel/captain_cloak_red, SLOT_BACK)
+		if(1501 to 3000) // 25hrs
 			new_human.wear_id.paygrade = "O7"
-		if(7501 to INFINITY) //125 hrs
+			new_human.equip_to_slot_or_del(new /obj/item/clothing/head/highcap/captain/black, SLOT_HEAD)
+			new_human.equip_to_slot_or_del(new /obj/item/storage/backpack/marine/satchel/captain_cloak_red, SLOT_BACK)
+		if(3001 to 4500) //50 hrs
 			new_human.wear_id.paygrade = "O8"
+			new_human.equip_to_slot_or_del(new /obj/item/clothing/head/beret/marine/captain, SLOT_HEAD)
+			new_human.equip_to_slot_or_del(new /obj/item/storage/backpack/marine/satchel/captain_cloak_red/white, SLOT_BACK)
+		if(4501 to INFINITY) //75 hrs
+			new_human.wear_id.paygrade = "O9"
+			new_human.equip_to_slot_or_del(new /obj/item/clothing/head/highcap/captain, SLOT_HEAD)
+			new_human.equip_to_slot_or_del(new /obj/item/storage/backpack/marine/satchel/captain_cloak_red/white, SLOT_BACK)
+
 
 /datum/job/terragov/command/captain/campaign
 	outfit = /datum/outfit/job/command/captain/campaign
@@ -77,14 +90,16 @@ Godspeed, captain! And remember, you are not above the law."})
 	jobtype = /datum/job/terragov/command/captain
 
 	id = /obj/item/card/id/gold
-	belt = /obj/item/storage/holster/belt/pistol/smart_pistol/full
 	ears = /obj/item/radio/headset/mainship/mcom
 	w_uniform = /obj/item/clothing/under/marine/officer/command
 	shoes = /obj/item/clothing/shoes/marinechief/captain
 	gloves = /obj/item/clothing/gloves/marine/techofficer/captain
-	head = /obj/item/clothing/head/tgmcberet/tan
 	r_store = /obj/item/storage/pouch/general/large/command
 	l_store = /obj/item/hud_tablet/leadership
+	belt = /obj/item/storage/holster/blade/officer/sabre/full
+	glasses = /obj/item/clothing/glasses/sunglasses/aviator/yellow
+	head = null
+	back = FALSE
 
 /datum/outfit/job/command/captain/robot
 	species = SPECIES_COMBAT_ROBOT
@@ -117,14 +132,15 @@ Godspeed, captain! And remember, you are not above the law."})
 		/datum/outfit/job/command/fieldcommander,
 		/datum/outfit/job/command/fieldcommander/robot,
 	)
-	exp_requirements = XP_REQ_EXPERIENCED
-	exp_type = EXP_TYPE_REGULAR_ALL
+	exp_type = EXP_TYPE_MARINES
+	exp_requirements = XP_REQ_EXPERT
 	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_ISCOMMAND|JOB_FLAG_BOLD_NAME_ON_SELECTION|JOB_FLAG_PROVIDES_SQUAD_HUD|JOB_FLAG_CAN_SEE_ORDERS|JOB_FLAG_ALWAYS_VISIBLE_ON_MINIMAP|JOB_FLAG_LOUDER_TTS
 	jobworth = list(
 		/datum/job/xenomorph = LARVA_POINTS_SHIPSIDE,
 		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
 		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
 		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
 	)
 	html_description = {"
 		<b>Difficulty</b>:Very Hard<br /><br />
@@ -253,14 +269,15 @@ Make the TGMC proud!"})
 		/datum/outfit/job/command/staffofficer,
 		/datum/outfit/job/command/staffofficer/robot,
 	)
-	exp_requirements = XP_REQ_INTERMEDIATE
 	exp_type = EXP_TYPE_REGULAR_ALL
+	exp_requirements = XP_REQ_EXPERIENCED
 	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_ISCOMMAND|JOB_FLAG_PROVIDES_SQUAD_HUD|JOB_FLAG_CAN_SEE_ORDERS|JOB_FLAG_ALWAYS_VISIBLE_ON_MINIMAP
 	jobworth = list(
 		/datum/job/xenomorph = LARVA_POINTS_SHIPSIDE,
 		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
 		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
 		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
 	)
 	html_description = {"
 		<b>Difficulty</b>: Medium<br /><br />
@@ -283,15 +300,22 @@ You are in charge of logistics and the overwatch system. You are also in line to
 		return
 	var/mob/living/carbon/human/new_human = new_mob
 	var/playtime_mins = user?.client?.get_exp(title)
+	new_human.dropItemToGround(new_human.head)
 	if(!playtime_mins || playtime_mins < 1 )
 		return
 	switch(playtime_mins)
 		if(0 to 1500) // starting
 			new_human.wear_id.paygrade = "O3"
+			new_human.equip_to_slot_or_del(new /obj/item/clothing/head/beret/marine/staff, SLOT_HEAD)
+			new_human.equip_to_slot_or_del(new /obj/item/storage/backpack/marine/satchel/officer_cloak_red, SLOT_BACK)
 		if(1501 to 3000) // 25 hrs
 			new_human.wear_id.paygrade = "O4"
+			new_human.equip_to_slot_or_del(new /obj/item/clothing/head/highcap/staff, SLOT_HEAD)
+			new_human.equip_to_slot_or_del(new /obj/item/storage/backpack/marine/satchel/officer_cloak_red, SLOT_BACK)
 		if(3001 to INFINITY) // 50 hrs
 			new_human.wear_id.paygrade = "O5"
+			new_human.equip_to_slot_or_del(new /obj/item/clothing/head/highcap/staff, SLOT_HEAD)
+			new_human.equip_to_slot_or_del(new /obj/item/storage/backpack/marine/satchel/officer_cloak_red/alt, SLOT_BACK)
 
 /datum/job/terragov/command/staffofficer/campaign
 	outfit = /datum/outfit/job/command/staffofficer/campaign
@@ -304,11 +328,13 @@ You are in charge of logistics and the overwatch system. You are also in line to
 	id = /obj/item/card/id/silver
 	belt = /obj/item/storage/holster/belt/pistol/m4a3/officer
 	ears = /obj/item/radio/headset/mainship/mcom
-	w_uniform = /obj/item/clothing/under/marine/officer/bridge
-	shoes = /obj/item/clothing/shoes/marine/full
-	head = /obj/item/clothing/head/tgmccap/ro
 	r_store = /obj/item/storage/pouch/general/large
 	l_store = /obj/item/binoculars/tactical
+	back = FALSE
+	head = null
+	w_uniform = /obj/item/clothing/under/marine/whites/blacks
+	shoes = /obj/item/clothing/shoes/laceup
+
 
 
 /datum/outfit/job/command/staffofficer/robot
@@ -324,17 +350,19 @@ You are in charge of logistics and the overwatch system. You are also in line to
 /datum/outfit/job/command/staffofficer/campaign
 	l_store = /obj/item/binoculars/fire_support/campaign
 
-//Pilot Officer
-/datum/job/terragov/command/pilot
-	title = PILOT_OFFICER
+	id = /obj/item/card/id/silver
+
+//Transport Officer
+/datum/job/terragov/command/transportofficer
+	title = TRANSPORT_OFFICER
 	paygrade = "WO"
-	comm_title = "PO"
-	total_positions = 2
-	access = list(ACCESS_MARINE_BRIDGE, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_PILOT)
-	minimal_access = list(ACCESS_MARINE_BRIDGE, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_PILOT, ACCESS_MARINE_LOGISTICS, ACCESS_MARINE_CARGO, ACCESS_MARINE_RO, ACCESS_MARINE_MEDBAY)
-	skills_type = /datum/skills/pilot
-	display_order = JOB_DISPLAY_ORDER_PILOT_OFFICER
-	outfit = /datum/outfit/job/command/pilot
+	comm_title = "TO"
+	total_positions = 1
+	access = list(ACCESS_MARINE_BRIDGE, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_PILOT, ACCESS_MARINE_TADPOLE)
+	minimal_access = list(ACCESS_MARINE_BRIDGE, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_PILOT, ACCESS_MARINE_TADPOLE, ACCESS_MARINE_LOGISTICS, ACCESS_MARINE_CARGO, ACCESS_MARINE_RO, ACCESS_MARINE_MEDBAY)
+	skills_type = /datum/skills/transportofficer
+	display_order = JOB_DISPLAY_ORDER_TRANSPORT_OFFICER
+	outfit = /datum/outfit/job/command/transportofficer
 	exp_requirements = XP_REQ_EXPERT
 	exp_type = EXP_TYPE_REGULAR_ALL
 	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_PROVIDES_SQUAD_HUD
@@ -345,11 +373,90 @@ You are in charge of logistics and the overwatch system. You are also in line to
 		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
 	)
 	html_description = {"
+		<b>Difficulty</b>: Hard<br /><br />
+		<b>You answer to the</b> acting Command Staff<br /><br />
+		<b>Unlock Requirement</b>: 100 hours<br /><br />
+		<b>Gamemode Availability</b>: Nuclear War<br /><br /><br />
+		<b>Duty</b>: Pilot the Tadpole, a versatile dropship capable of fulfilling roles ranging from ambulance to mobile bunker.
+	"}
+	minimap_icon = "transportofficer"
+
+/datum/job/terragov/command/transportofficer/after_spawn(mob/living/carbon/new_mob, mob/user, latejoin = FALSE)
+	. = ..()
+	if(!ishuman(new_mob))
+		return
+	var/mob/living/carbon/human/new_human = new_mob
+	var/playtime_mins = user?.client?.get_exp(title)
+	if(!playtime_mins || playtime_mins < 1 )
+		return
+	switch(playtime_mins)
+		if(0 to 600) // starting
+			new_human.wear_id.paygrade = "WO"
+		if(601 to 3000) // 10 hrs
+			new_human.wear_id.paygrade = "CWO"
+		if(3001 to 6000) // 50 hrs
+			new_human.wear_id.paygrade = "O1"
+		if(6001 to INFINITY) // 100 hrs
+			new_human.wear_id.paygrade = "O2"
+
+/datum/job/terragov/command/transportofficer/radio_help_message(mob/M)
+	. = ..()
+	to_chat(M, {"Your job is to support marines mobile dropship support with the Tadpole.
+You are to ensure the Tadpole's survival and to transport marines around, acting as a mobile bunker. In the case of it's death, you may perform the role of Combat Engineer.
+"})
+
+/datum/outfit/job/command/transportofficer
+	name = TRANSPORT_OFFICER
+	jobtype = /datum/job/terragov/command/transportofficer
+
+	id = /obj/item/card/id/silver
+	belt = /obj/item/storage/belt/utility/full
+	ears = /obj/item/radio/headset/mainship/mcom
+	w_uniform = /obj/item/clothing/under/marine/officer/pilot
+	wear_suit = /obj/item/clothing/suit/modular/xenonauten/pilot
+	shoes = /obj/item/clothing/shoes/marine/full
+	gloves = /obj/item/clothing/gloves/marine/insulated
+	glasses = /obj/item/clothing/glasses/welding/superior
+	head = /obj/item/clothing/head/helmet/marine/pilot
+	r_store = /obj/item/storage/pouch/construction
+	l_store = /obj/item/hud_tablet/transportofficer
+	back = /obj/item/storage/backpack/marine/engineerpack
+	suit_store = /obj/item/storage/holster/belt/pistol/m4a3/vp70
+
+/datum/outfit/job/command/transportofficer/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
+	. = ..()
+	H.equip_to_slot_or_hand(new /obj/item/stack/sheet/metal/large_stack, SLOT_IN_R_POUCH)
+	H.equip_to_slot_or_hand(new /obj/item/stack/sheet/plasteel/large_stack, SLOT_IN_R_POUCH)
+	H.equip_to_slot_or_hand(new /obj/item/stack/sandbags/large_stack, SLOT_IN_R_POUCH)
+	H.equip_to_slot_or_hand(new /obj/item/stack/barbed_wire/full, SLOT_IN_R_POUCH)
+
+//Pilot Officer
+/datum/job/terragov/command/pilot
+	title = PILOT_OFFICER
+	paygrade = "WO"
+	comm_title = "PO"
+	total_positions = 1
+	access = list(ACCESS_MARINE_BRIDGE, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_PILOT)
+	minimal_access = list(ACCESS_MARINE_BRIDGE, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_PILOT, ACCESS_MARINE_LOGISTICS, ACCESS_MARINE_CARGO, ACCESS_MARINE_RO, ACCESS_MARINE_MEDBAY)
+	skills_type = /datum/skills/pilot
+	display_order = JOB_DISPLAY_ORDER_PILOT_OFFICER
+	outfit = /datum/outfit/job/command/pilot
+	exp_type = EXP_TYPE_REGULAR_ALL
+	exp_requirements = XP_REQ_EXPERIENCED
+	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_PROVIDES_SQUAD_HUD
+	jobworth = list(
+		/datum/job/xenomorph = LARVA_POINTS_SHIPSIDE_STRONG,
+		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
+		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
+		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
+	)
+	html_description = {"
 		<b>Difficulty</b>: Medium<br /><br />
 		<b>You answer to the</b> acting Command Staff<br /><br />
 		<b>Unlock Requirement</b>: Starting Role<br /><br />
 		<b>Gamemode Availability</b>: Nuclear War<br /><br /><br />
-		<b>Duty</b>: Choose between the Condor, a modular attack aircraft that provides close air support with a variety of weapons ranging from the inbuilt gatling to wing mounted rockets; or the Tadpole, a versatile dropship capable of fulfilling roles ranging from ambulance to mobile bunker.
+		<b>Duty</b>: Pilot the Condor, a modular attack aircraft that provides close air support with a variety of weapons ranging from the inbuilt gatling to wing mounted rockets.
 	"}
 	minimap_icon = "pilot"
 
@@ -371,14 +478,12 @@ You are in charge of logistics and the overwatch system. You are also in line to
 		if(6001 to INFINITY) // 100 hrs
 			new_human.wear_id.paygrade = "O2"
 
-/* RUTGMC DELETION
 /datum/job/terragov/command/pilot/radio_help_message(mob/M)
 	. = ..()
-	to_chat(M, {"Your job is to support marines with either close air support via the Condor, or mobile dropship support with the Tadpole.
-While you are in charge of all aerial crafts the Alamo does not require supervision outside of turning automatic mode on or off at crucial times, and you are expected to choose between the Condor and Tadpole.
-Though you are a warrant officer, your authority is limited to the dropship and your chosen aerial craft, where you have authority over the enlisted personnel.
+	to_chat(M, {"Your job is to support marines with either close air support via the Condor.
+You are expected to use the Condor as the Alamo is able to be ran automatically, though at some points you will be required to take control of the Alamo for the operation's success, though highly unlikey.
+Though you are a warrant officer, your authority is limited to the dropship and the Condor, where you have authority over the enlisted personnel.
 "})
-*/
 
 /datum/outfit/job/command/pilot
 	name = PILOT_OFFICER
@@ -408,13 +513,14 @@ Though you are a warrant officer, your authority is limited to the dropship and 
 	minimal_access = list(ACCESS_MARINE_WO, ACCESS_MARINE_PREP, ACCESS_MARINE_MECH, ACCESS_CIVILIAN_PUBLIC, ACCESS_MARINE_BRIDGE, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_LOGISTICS, ACCESS_MARINE_CARGO)
 	display_order = JOB_DISPLAY_ORDER_MECH_PILOT
 	outfit = /datum/outfit/job/command/mech_pilot
-	exp_requirements = XP_REQ_EXPERT
-	exp_type = EXP_TYPE_REGULAR_ALL
+	exp_type = EXP_TYPE_MARINES
+	exp_requirements = XP_REQ_EXPERIENCED
 	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_PROVIDES_SQUAD_HUD|JOB_FLAG_CAN_SEE_ORDERS|JOB_FLAG_ALWAYS_VISIBLE_ON_MINIMAP
 	job_points_needed = 80
 	jobworth = list(
 		/datum/job/xenomorph = LARVA_POINTS_REGULAR,
 		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
 	)
 	html_description = {"
 		<b>Difficulty</b>:Very Hard<br /><br />
@@ -460,44 +566,45 @@ You can serve your Division in a variety of roles, so choose carefully."})
 	shoes = /obj/item/clothing/shoes/marine/full
 	gloves = /obj/item/clothing/gloves/marine
 
-/datum/job/terragov/engineering
-	job_category = JOB_CAT_ENGINEERING
-	selection_color = "#fff5cc"
-	supervisors = "the acting captain"
-	exp_type_department = EXP_TYPE_ENGINEERING
-
-
-//Chief Ship Engineer
-/datum/job/terragov/engineering/chief
-	title = CHIEF_SHIP_ENGINEER
-	paygrade = "O2"
-	comm_title = "CSE"
-	selection_color = "#ffeeaa"
-	total_positions = 1
-	access = list(ACCESS_MARINE_CE, ACCESS_MARINE_ENGINEERING, ACCESS_MARINE_BRIDGE, ACCESS_CIVILIAN_ENGINEERING, ACCESS_MARINE_CARGO, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_PREP)
-	minimal_access = list(ACCESS_MARINE_CE, ACCESS_MARINE_ENGINEERING, ACCESS_MARINE_BRIDGE, ACCESS_CIVILIAN_ENGINEERING, ACCESS_MARINE_CARGO, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_LOGISTICS, ACCESS_MARINE_PREP, ACCESS_MARINE_RO, ACCESS_MARINE_MEDBAY)
-	skills_type = /datum/skills/ce
-	display_order = JOB_DISPLAY_ORDER_CHIEF_ENGINEER
-	outfit = /datum/outfit/job/engineering/chief
-	exp_requirements = XP_REQ_EXPERIENCED
+//tank/arty driver+gunner
+/datum/job/terragov/command/assault_crewman
+	title = ASSAULT_CREWMAN
+	req_admin_notify = TRUE
+	paygrade = "E3"
+	comm_title = "AC"
+	total_positions = 0
+	skills_type = /datum/skills/assault_crewman
+	access = list(ACCESS_MARINE_WO, ACCESS_MARINE_PREP, ACCESS_MARINE_ARMORED, ACCESS_CIVILIAN_PUBLIC)
+	minimal_access = list(ACCESS_MARINE_WO, ACCESS_MARINE_PREP, ACCESS_MARINE_ARMORED, ACCESS_CIVILIAN_PUBLIC, ACCESS_MARINE_BRIDGE, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_LOGISTICS, ACCESS_MARINE_CARGO)
+	display_order = JOB_DISPLAY_ORDER_MECH_PILOT
+	outfit = /datum/outfit/job/command/assault_crewman
+	exp_requirements = XP_REQ_EXPERT
 	exp_type = EXP_TYPE_REGULAR_ALL
-	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_ISCOMMAND|JOB_FLAG_BOLD_NAME_ON_SELECTION|JOB_FLAG_PROVIDES_SQUAD_HUD
+	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_PROVIDES_SQUAD_HUD|JOB_FLAG_CAN_SEE_ORDERS|JOB_FLAG_ALWAYS_VISIBLE_ON_MINIMAP
+	job_points_needed = 999 //50
 	jobworth = list(
-		/datum/job/xenomorph = LARVA_POINTS_SHIPSIDE,
+		/datum/job/xenomorph = LARVA_POINTS_REGULAR,
 		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
-		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
-		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
 	)
 	html_description = {"
-		<b>Difficulty</b>: Hard<br /><br />
+		<b>Difficulty</b>:Very Hard<br /><br />
 		<b>You answer to the</b> acting Command Staff<br /><br />
 		<b>Unlock Requirement</b>: Starting Role<br /><br />
 		<b>Gamemode Availability</b>: Nuclear War<br /><br /><br />
-		<b>Duty</b>: Supervise the engineers and technicians on duty. Overview the ship’s engine. Teach what’s right and what’s wrong about engineering, cut corners and find places in any FOB that can easily be destroyed.
+		<b>Duty</b>: Provide heavy fire support
 	"}
-	minimap_icon = "cse"
+	minimap_icon = "assault_crew"
 
-/datum/job/terragov/engineering/chief/after_spawn(mob/living/carbon/new_mob, mob/user, latejoin = FALSE)
+/datum/job/terragov/command/assault_crewman/add_job_points(amount)
+	. = ..()
+	if(total_positions % 2)
+		add_job_positions(1) //always 2 there are, a master and an apprentice
+
+/datum/job/terragov/command/assault_crewman/radio_help_message(mob/M)
+	. = ..()
+	to_chat(M, {"You are an Assault Crewman. You operate the TGMC's armored assault vehicles along with your partner, and in some cases a \"willing\" loader. Make sure that you work as a team to advance the front!"})
+
+/datum/job/terragov/command/assault_crewman/after_spawn(mob/living/carbon/new_mob, mob/user, latejoin = FALSE)
 	. = ..()
 	if(!ishuman(new_mob))
 		return
@@ -507,71 +614,275 @@ You can serve your Division in a variety of roles, so choose carefully."})
 		return
 	switch(playtime_mins)
 		if(0 to 1500) // starting
-			new_human.wear_id.paygrade = "O2"
+			new_human.wear_id.paygrade = "E3"
 		if(1501 to 6000) // 25 hrs
-			new_human.wear_id.paygrade = "O3"
-		if(6001 to INFINITY) // 100 hrs
-			new_human.wear_id.paygrade = "O4"
+			new_human.wear_id.paygrade = "E4"
+		if(6001 to 18000) // 100 hrs
+			new_human.wear_id.paygrade = "E5"
+		if(18001 to 60000) // 300 hrs
+			new_human.wear_id.paygrade = "E6"
+		if(60001 to INFINITY) // 1000 hrs
+			new_human.wear_id.paygrade = "E9A" //If you play way too much TGMC. 1000 hours.
 
-/datum/job/terragov/engineering/chief/radio_help_message(mob/M)
-	. = ..()
-	to_chat(M, {"Your job is to maintain the ship's engine and keep everything running.
-If you have no idea how to set up the engine, or it's your first time, <b>mentorhelp</b> so that a mentor can assist you.
-You are also next in the chain of command, should the bridge crew fall in the line of duty."})
+/datum/outfit/job/command/assault_crewman
+	name = ASSAULT_CREWMAN
+	jobtype = /datum/job/terragov/command/assault_crewman
 
-
-/datum/outfit/job/engineering/chief
-	name = CHIEF_SHIP_ENGINEER
-	jobtype = /datum/job/terragov/engineering/chief
-
-	id = /obj/item/card/id/silver
+	id = /obj/item/card/id/dogtag
 	belt = /obj/item/storage/belt/utility/full
+	glasses = /obj/item/clothing/glasses/welding
 	ears = /obj/item/radio/headset/mainship/mcom
-	w_uniform = /obj/item/clothing/under/marine/officer/ce
-	wear_suit = /obj/item/clothing/suit/storage/marine/officer/req
+	w_uniform = /obj/item/clothing/under/marine/officer/assault_crewman
+	wear_suit = /obj/item/clothing/suit/storage/marine/assault_crewman
+	head = /obj/item/clothing/head/helmet/marine/assault_crewman
 	shoes = /obj/item/clothing/shoes/marine/full
-	glasses = /obj/item/clothing/glasses/welding/superior
-	gloves = /obj/item/clothing/gloves/insulated
-	head = /obj/item/clothing/head/beret/marine/techofficer
-	r_store = /obj/item/storage/pouch/construction
-	back = /obj/item/storage/backpack/marine/engineerpack
+	gloves = /obj/item/clothing/gloves/marine
 
-/datum/outfit/job/engineering/chief/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
+
+//apc/jeep driver
+/datum/job/terragov/command/transport_crewman
+	title = TRANSPORT_CREWMAN
+	req_admin_notify = TRUE
+	paygrade = "E3"
+	comm_title = "TC"
+	total_positions = 0
+	skills_type = /datum/skills/transport_crewman
+	access = list(ACCESS_MARINE_WO, ACCESS_MARINE_PREP, ACCESS_MARINE_ARMORED, ACCESS_CIVILIAN_PUBLIC)
+	minimal_access = list(ACCESS_MARINE_WO, ACCESS_MARINE_PREP, ACCESS_MARINE_ARMORED, ACCESS_CIVILIAN_PUBLIC, ACCESS_MARINE_BRIDGE, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_LOGISTICS, ACCESS_MARINE_CARGO)
+	display_order = JOB_DISPLAY_ORDER_MECH_PILOT
+	outfit = /datum/outfit/job/command/transport_crewman
+	exp_requirements = XP_REQ_EXPERT
+	exp_type = EXP_TYPE_REGULAR_ALL
+	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_PROVIDES_SQUAD_HUD|JOB_FLAG_CAN_SEE_ORDERS|JOB_FLAG_ALWAYS_VISIBLE_ON_MINIMAP
+	job_points_needed = 40
+	jobworth = list(
+		/datum/job/xenomorph = LARVA_POINTS_REGULAR,
+		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
+	)
+	html_description = {"
+		<b>Difficulty</b>:Very Hard<br /><br />
+		<b>You answer to the</b> acting Command Staff<br /><br />
+		<b>Unlock Requirement</b>: Starting Role<br /><br />
+		<b>Gamemode Availability</b>: Nuclear War<br /><br /><br />
+		<b>Duty</b>: Transport and support the frontline troops
+	"}
+	minimap_icon = "transport_crew"
+
+/datum/job/terragov/command/transport_crewman/radio_help_message(mob/M)
 	. = ..()
-	H.equip_to_slot_or_hand(new /obj/item/stack/sheet/metal/large_stack, SLOT_IN_R_POUCH)
-	H.equip_to_slot_or_hand(new /obj/item/stack/sheet/plasteel/large_stack, SLOT_IN_R_POUCH)
-	H.equip_to_slot_or_hand(new /obj/item/stack/sandbags/large_stack, SLOT_IN_R_POUCH)
-	H.equip_to_slot_or_hand(new /obj/item/stack/barbed_wire/full, SLOT_IN_R_POUCH)
+	to_chat(M, {"You are a Transport Crewman. You operate the TGMC's transport vehciles to ensure that marines and equipment gets to the front in a timely and safe manner."})
+
+/datum/job/terragov/command/transport_crewman/after_spawn(mob/living/carbon/new_mob, mob/user, latejoin = FALSE)
+	. = ..()
+	if(!ishuman(new_mob))
+		return
+	var/mob/living/carbon/human/new_human = new_mob
+	var/playtime_mins = user?.client?.get_exp(title)
+	if(!playtime_mins || playtime_mins < 1 )
+		return
+	switch(playtime_mins)
+		if(0 to 1500) // starting
+			new_human.wear_id.paygrade = "E3"
+		if(1501 to 6000) // 25 hrs
+			new_human.wear_id.paygrade = "E4"
+		if(6001 to 18000) // 100 hrs
+			new_human.wear_id.paygrade = "E5"
+		if(18001 to 60000) // 300 hrs
+			new_human.wear_id.paygrade = "E6"
+		if(60001 to INFINITY) // 1000 hrs
+			new_human.wear_id.paygrade = "E9A" //If you play way too much TGMC. 1000 hours.
+
+/datum/outfit/job/command/transport_crewman
+	name = TRANSPORT_CREWMAN
+	jobtype = /datum/job/terragov/command/transport_crewman
+
+	id = /obj/item/card/id/dogtag
+	belt = /obj/item/storage/belt/utility/full
+	glasses = /obj/item/clothing/glasses/welding
+	ears = /obj/item/radio/headset/mainship/mcom
+	w_uniform = /obj/item/clothing/under/marine/officer/transport_crewman
+	wear_suit = /obj/item/clothing/suit/storage/marine/transport_crewman
+	head = /obj/item/clothing/head/helmet/marine/transport_crewman
+	shoes = /obj/item/clothing/shoes/marine/full
+	gloves = /obj/item/clothing/gloves/marine
+
+//tank/arty driver+gunner
+/datum/job/terragov/command/assault_crewman
+	title = ASSAULT_CREWMAN
+	req_admin_notify = TRUE
+	paygrade = "E3"
+	comm_title = "AC"
+	total_positions = 0
+	skills_type = /datum/skills/assault_crewman
+	access = list(ACCESS_MARINE_WO, ACCESS_MARINE_PREP, ACCESS_MARINE_ARMORED, ACCESS_CIVILIAN_PUBLIC)
+	minimal_access = list(ACCESS_MARINE_WO, ACCESS_MARINE_PREP, ACCESS_MARINE_ARMORED, ACCESS_CIVILIAN_PUBLIC, ACCESS_MARINE_BRIDGE, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_LOGISTICS, ACCESS_MARINE_CARGO)
+	display_order = JOB_DISPLAY_ORDER_MECH_PILOT
+	outfit = /datum/outfit/job/command/assault_crewman
+	exp_requirements = XP_REQ_EXPERT
+	exp_type = EXP_TYPE_REGULAR_ALL
+	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_PROVIDES_SQUAD_HUD|JOB_FLAG_CAN_SEE_ORDERS|JOB_FLAG_ALWAYS_VISIBLE_ON_MINIMAP
+	job_points_needed = 999 //50
+	jobworth = list(
+		/datum/job/xenomorph = LARVA_POINTS_REGULAR,
+		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
+	)
+	html_description = {"
+		<b>Difficulty</b>:Very Hard<br /><br />
+		<b>You answer to the</b> acting Command Staff<br /><br />
+		<b>Unlock Requirement</b>: Starting Role<br /><br />
+		<b>Gamemode Availability</b>: Nuclear War<br /><br /><br />
+		<b>Duty</b>: Provide heavy fire support
+	"}
+	minimap_icon = "assault_crew"
+
+/datum/job/terragov/command/assault_crewman/add_job_points(amount)
+	. = ..()
+	if(total_positions % 2)
+		add_job_positions(1) //always 2 there are, a master and an apprentice
+
+/datum/job/terragov/command/assault_crewman/radio_help_message(mob/M)
+	. = ..()
+	to_chat(M, {"You are an Assault Crewman. You operate the TGMC's armored assault vehicles along with your partner, and in some cases a \"willing\" loader. Make sure that you work as a team to advance the front!"})
+
+/datum/job/terragov/command/assault_crewman/after_spawn(mob/living/carbon/new_mob, mob/user, latejoin = FALSE)
+	. = ..()
+	if(!ishuman(new_mob))
+		return
+	var/mob/living/carbon/human/new_human = new_mob
+	var/playtime_mins = user?.client?.get_exp(title)
+	if(!playtime_mins || playtime_mins < 1 )
+		return
+	switch(playtime_mins)
+		if(0 to 1500) // starting
+			new_human.wear_id.paygrade = "E3"
+		if(1501 to 6000) // 25 hrs
+			new_human.wear_id.paygrade = "E4"
+		if(6001 to 18000) // 100 hrs
+			new_human.wear_id.paygrade = "E5"
+		if(18001 to 60000) // 300 hrs
+			new_human.wear_id.paygrade = "E6"
+		if(60001 to INFINITY) // 1000 hrs
+			new_human.wear_id.paygrade = "E9A" //If you play way too much TGMC. 1000 hours.
+
+/datum/outfit/job/command/assault_crewman
+	name = ASSAULT_CREWMAN
+	jobtype = /datum/job/terragov/command/assault_crewman
+
+	id = /obj/item/card/id/dogtag
+	belt = /obj/item/storage/belt/utility/full
+	glasses = /obj/item/clothing/glasses/welding
+	ears = /obj/item/radio/headset/mainship/mcom
+	w_uniform = /obj/item/clothing/under/marine/officer/assault_crewman
+	wear_suit = /obj/item/clothing/suit/storage/marine/assault_crewman
+	head = /obj/item/clothing/head/helmet/marine/assault_crewman
+	shoes = /obj/item/clothing/shoes/marine/full
+	gloves = /obj/item/clothing/gloves/marine
+
+//apc/jeep driver
+/datum/job/terragov/command/transport_crewman
+	title = TRANSPORT_CREWMAN
+	req_admin_notify = TRUE
+	paygrade = "E3"
+	comm_title = "TC"
+	total_positions = 0
+	skills_type = /datum/skills/transport_crewman
+	access = list(ACCESS_MARINE_WO, ACCESS_MARINE_PREP, ACCESS_MARINE_ARMORED, ACCESS_CIVILIAN_PUBLIC)
+	minimal_access = list(ACCESS_MARINE_WO, ACCESS_MARINE_PREP, ACCESS_MARINE_ARMORED, ACCESS_CIVILIAN_PUBLIC, ACCESS_MARINE_BRIDGE, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_LOGISTICS, ACCESS_MARINE_CARGO)
+	display_order = JOB_DISPLAY_ORDER_MECH_PILOT
+	outfit = /datum/outfit/job/command/transport_crewman
+	exp_requirements = XP_REQ_EXPERT
+	exp_type = EXP_TYPE_REGULAR_ALL
+	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_PROVIDES_SQUAD_HUD|JOB_FLAG_CAN_SEE_ORDERS|JOB_FLAG_ALWAYS_VISIBLE_ON_MINIMAP
+	job_points_needed = 40
+	jobworth = list(
+		/datum/job/xenomorph = LARVA_POINTS_REGULAR,
+		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
+	)
+	html_description = {"
+		<b>Difficulty</b>:Very Hard<br /><br />
+		<b>You answer to the</b> acting Command Staff<br /><br />
+		<b>Unlock Requirement</b>: Starting Role<br /><br />
+		<b>Gamemode Availability</b>: Nuclear War<br /><br /><br />
+		<b>Duty</b>: Transport and support the frontline troops
+	"}
+	minimap_icon = "transport_crew"
+
+/datum/job/terragov/command/transport_crewman/radio_help_message(mob/M)
+	. = ..()
+	to_chat(M, {"You are a Transport Crewman. You operate the TGMC's transport vehciles to ensure that marines and equipment gets to the front in a timely and safe manner."})
+
+/datum/job/terragov/command/transport_crewman/after_spawn(mob/living/carbon/new_mob, mob/user, latejoin = FALSE)
+	. = ..()
+	if(!ishuman(new_mob))
+		return
+	var/mob/living/carbon/human/new_human = new_mob
+	var/playtime_mins = user?.client?.get_exp(title)
+	if(!playtime_mins || playtime_mins < 1 )
+		return
+	switch(playtime_mins)
+		if(0 to 1500) // starting
+			new_human.wear_id.paygrade = "E3"
+		if(1501 to 6000) // 25 hrs
+			new_human.wear_id.paygrade = "E4"
+		if(6001 to 18000) // 100 hrs
+			new_human.wear_id.paygrade = "E5"
+		if(18001 to 60000) // 300 hrs
+			new_human.wear_id.paygrade = "E6"
+		if(60001 to INFINITY) // 1000 hrs
+			new_human.wear_id.paygrade = "E9A" //If you play way too much TGMC. 1000 hours.
+
+/datum/outfit/job/command/transport_crewman
+	name = TRANSPORT_CREWMAN
+	jobtype = /datum/job/terragov/command/transport_crewman
+
+	id = /obj/item/card/id/dogtag
+	belt = /obj/item/storage/belt/utility/full
+	glasses = /obj/item/clothing/glasses/welding
+	ears = /obj/item/radio/headset/mainship/mcom
+	w_uniform = /obj/item/clothing/under/marine/officer/transport_crewman
+	wear_suit = /obj/item/clothing/suit/storage/marine/transport_crewman
+	head = /obj/item/clothing/head/helmet/marine/transport_crewman
+	shoes = /obj/item/clothing/shoes/marine/full
+	gloves = /obj/item/clothing/gloves/marine
+
+/datum/job/terragov/engineering
+	job_category = JOB_CAT_ENGINEERING
+	selection_color = "#fff5cc"
+	supervisors = "the acting captain"
+	exp_type_department = EXP_TYPE_ENGINEERING
 
 //Ship Engineer
-/datum/job/terragov/engineering/tech
+/datum/job/terragov/requisitions/tech
 	title = SHIP_TECH
 	comm_title = "ST"
 	paygrade = "PO3"
 	total_positions = 5
-	supervisors = "the chief ship engineer and the requisitions officer"
+	supervisors = "the requisitions officer"
 	access = list(ACCESS_MARINE_ENGINEERING, ACCESS_MARINE_PREP, ACCESS_MARINE_MEDBAY, ACCESS_MARINE_CARGO, ACCESS_CIVILIAN_ENGINEERING)
 	minimal_access = list(ACCESS_MARINE_ENGINEERING, ACCESS_MARINE_PREP, ACCESS_MARINE_MEDBAY, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_CARGO, ACCESS_CIVILIAN_ENGINEERING)
 	skills_type = /datum/skills/st
 	display_order = JOB_DISPLAY_ORDER_SHIP_TECH
-	outfit = /datum/outfit/job/engineering/tech
+	outfit = /datum/outfit/job/requisitions/tech
+	exp_type = EXP_TYPE_REGULAR_ALL
+	exp_requirements = XP_REQ_INTERMEDIATE
 	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_PROVIDES_SQUAD_HUD
 	jobworth = list(
 		/datum/job/xenomorph = LARVA_POINTS_SHIPSIDE,
 		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
 		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
 		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
 	)
 	html_description = {"
 		<b>Difficulty</b>: Medium<br /><br />
-		<b>You answer to the</b> Chief Ship Engineer<br /><br />
+		<b>You answer to the</b> Requisitions Officer<br /><br />
 		<b>Unlock Requirement</b>: Starting Role<br /><br />
 		<b>Gamemode Availability</b>: Nuclear War<br /><br /><br />
 		<b>Duty</b>: Maintain the ship, be in charge of the engines. Be the secondary engineer to a forward operating base, prepare the shipside defenses if needed. Help the Pilot Officer in preparing the dropship.
 	"}
 	minimap_icon = "st"
 
-/datum/job/terragov/engineering/tech/after_spawn(mob/living/carbon/new_mob, mob/user, latejoin = FALSE)
+/datum/job/terragov/requisitions/tech/after_spawn(mob/living/carbon/new_mob, mob/user, latejoin = FALSE)
 	. = ..()
 	if(!ishuman(new_mob))
 		return
@@ -589,15 +900,15 @@ You are also next in the chain of command, should the bridge crew fall in the li
 		if(6001 to INFINITY) // 100 hrs
 			new_human.wear_id.paygrade = "CPO"
 
-/datum/job/terragov/engineering/tech/radio_help_message(mob/M)
+/datum/job/terragov/requisitions/tech/radio_help_message(mob/M)
 	. = ..()
 	to_chat(M, {"Your job is to make sure the ship is operational, you should firstly focus on manning the
 requisitions line and later on to be ready to send supplies for marines who are groundside."})
 
 
-/datum/outfit/job/engineering/tech
+/datum/outfit/job/requisitions/tech
 	name = SHIP_TECH
-	jobtype = /datum/job/terragov/engineering/tech
+	jobtype = /datum/job/terragov/requisitions/tech
 
 	id = /obj/item/card/id/silver
 	belt = /obj/item/storage/belt/utility/full
@@ -631,14 +942,15 @@ requisitions line and later on to be ready to send supplies for marines who are 
 	skills_type = /datum/skills/ro
 	display_order = JOB_DISPLAY_ORDER_REQUISITIONS_OFFICER
 	outfit = /datum/outfit/job/requisitions/officer
-	exp_requirements = XP_REQ_UNSEASONED
 	exp_type = EXP_TYPE_REGULAR_ALL
+	exp_requirements = XP_REQ_EXPERIENCED
 	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_ISCOMMAND|JOB_FLAG_BOLD_NAME_ON_SELECTION|JOB_FLAG_PROVIDES_SQUAD_HUD
 	jobworth = list(
 		/datum/job/xenomorph = LARVA_POINTS_SHIPSIDE,
 		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
 		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
 		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
 	)
 	html_description = {"
 		<b>Difficulty</b>: Medium<br /><br />
@@ -714,14 +1026,15 @@ A happy ship is a well-functioning ship."})
 		/datum/outfit/job/medical/professor,
 		/datum/outfit/job/medical/professor/robot,
 	)
-	exp_requirements = XP_REQ_EXPERIENCED
-	exp_type = EXP_TYPE_REGULAR_ALL
+	exp_type = EXP_TYPE_MEDICAL
+	exp_requirements = XP_REQ_INTERMEDIATE
 	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_ISCOMMAND|JOB_FLAG_BOLD_NAME_ON_SELECTION|JOB_FLAG_PROVIDES_SQUAD_HUD
 	jobworth = list(
 		/datum/job/xenomorph = LARVA_POINTS_SHIPSIDE,
 		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
 		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
 		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
 	)
 	html_description = {"
 		<b>Difficulty</b>: Hard<br /><br />
@@ -800,12 +1113,15 @@ Make sure that the doctors and nurses are doing their jobs and keeping the marin
 		/datum/outfit/job/medical/medicalofficer,
 		/datum/outfit/job/medical/medicalofficer/robot,
 	)
+	exp_type = EXP_TYPE_REGULAR_ALL
+	exp_requirements = XP_REQ_INTERMEDIATE
 	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_PROVIDES_SQUAD_HUD
 	jobworth = list(
 		/datum/job/xenomorph = LARVA_POINTS_SHIPSIDE,
 		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
 		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
 		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
 	)
 	html_description = {"
 		<b>Difficulty</b>: Medium<br /><br />
@@ -886,12 +1202,15 @@ You are also an expert when it comes to medication and treatment. If you do not 
 		/datum/outfit/job/medical/researcher,
 		/datum/outfit/job/medical/researcher/robot,
 	)
+	exp_type = EXP_TYPE_MEDICAL
+	exp_requirements = XP_REQ_INTERMEDIATE
 	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ALLOWS_PREFS_GEAR|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_PROVIDES_SQUAD_HUD|JOB_FLAG_ALWAYS_VISIBLE_ON_MINIMAP
 	jobworth = list(
 		/datum/job/xenomorph = LARVA_POINTS_SHIPSIDE,
 		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
 		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
 		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
 	)
 	html_description = {"
 		<b>Difficulty</b>: Medium<br /><br />
@@ -972,12 +1291,15 @@ It is also recommended that you gear up like a regular marine, or your 'internsh
 	skills_type = /datum/skills/civilian
 	display_order = JOB_DISPLAY_ORDER_CORPORATE_LIAISON
 	outfit = /datum/outfit/job/civilian/liaison
+	exp_type = EXP_TYPE_REGULAR_ALL
+	exp_requirements = XP_REQ_INTERMEDIATE
 	job_flags = JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_PROVIDES_BANK_ACCOUNT|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_PROVIDES_SQUAD_HUD
 	jobworth = list(
 		/datum/job/xenomorph = LARVA_POINTS_SHIPSIDE,
 		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
 		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
 		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
 	)
 	html_description = {"
 		<b>Difficulty</b>: Hard (varies)<br /><br />
@@ -1044,14 +1366,15 @@ Use your office fax machine to communicate with corporate headquarters or to acq
 	minimal_access = ALL_ACCESS
 	display_order = JOB_DISPLAY_ORDER_SYNTHETIC
 	outfit = /datum/outfit/job/civilian/synthetic
-	exp_requirements = XP_REQ_EXPERIENCED
 	exp_type = EXP_TYPE_REGULAR_ALL
+	exp_requirements = XP_REQ_EXPERT
 	job_flags = JOB_FLAG_SPECIALNAME|JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_ADDTOMANIFEST|JOB_FLAG_ISCOMMAND|JOB_FLAG_BOLD_NAME_ON_SELECTION|JOB_FLAG_PROVIDES_SQUAD_HUD|JOB_FLAG_CAN_SEE_ORDERS|JOB_FLAG_ALWAYS_VISIBLE_ON_MINIMAP
 	job_points_needed = 40
 	jobworth = list(
 		/datum/job/xenomorph = LARVA_POINTS_SHIPSIDE_STRONG,
 		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
 		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
 	)
 	html_description = {"
 		<b>Difficulty</b>: Soul Crushing<br /><br />
@@ -1075,7 +1398,6 @@ Use your office fax machine to communicate with corporate headquarters or to acq
 		return /datum/skills/early_synthetic
 	return ..()
 
-/* RUTGMC DELETION
 /datum/job/terragov/silicon/synthetic/after_spawn(mob/living/carbon/new_mob, mob/user, latejoin = FALSE)
 	. = ..()
 	if(!ishuman(new_mob))
@@ -1089,9 +1411,22 @@ Use your office fax machine to communicate with corporate headquarters or to acq
 			new_human.wear_id.paygrade = "Mk.I"
 		if(601 to 3000) // 10 to 50 hrs
 			new_human.wear_id.paygrade = "Mk.II"
-		if(3001 to INFINITY) // more than 50 hrs
+		if(3001 to 6000) // 50 to 100 hrs
 			new_human.wear_id.paygrade = "Mk.III"
-*/
+		if(6001 to 9000) // 100 to 150 hrs
+			new_human.wear_id.paygrade = "Mk.IV"
+		if(9001 to 12000) // 150 to 200 hrs
+			new_human.wear_id.paygrade = "Mk.V"
+		if(12001 to 15000) // 200 to 250 hrs
+			new_human.wear_id.paygrade = "Mk.VI"
+		if(15001 to 18000) // 250 to 300 hrs
+			new_human.wear_id.paygrade = "Mk.VII"
+		if(18001 to 21000) // 300 to 350 hrs
+			new_human.wear_id.paygrade = "Mk.VIII"
+		if(21001 to 60000) // 350 to 1000 hrs
+			new_human.wear_id.paygrade = "Mk.IX"
+		if(60001 to INFINITY) // 1000 hrs and more
+			new_human.wear_id.paygrade = "Mk.X"
 
 /datum/job/terragov/silicon/synthetic/radio_help_message(mob/M)
 	. = ..()
@@ -1123,7 +1458,7 @@ In addition, being a Synthetic gives you knowledge in every field and specializa
 	supervisors = "your laws and the human crew"
 	exp_requirements = XP_REQ_INTERMEDIATE
 	exp_type = EXP_TYPE_REGULAR_ALL
-	exp_type_department = EXP_TYPE_SILICON
+	exp_requirements = XP_REQ_EXPERIENCED
 	display_order = JOB_DISPLAY_ORDER_AI
 	skills_type = /datum/skills/ai
 	job_flags = JOB_FLAG_SPECIALNAME|JOB_FLAG_LATEJOINABLE|JOB_FLAG_ROUNDSTARTJOINABLE|JOB_FLAG_OVERRIDELATEJOINSPAWN|JOB_FLAG_ISCOMMAND|JOB_FLAG_BOLD_NAME_ON_SELECTION
@@ -1132,6 +1467,7 @@ In addition, being a Synthetic gives you knowledge in every field and specializa
 		/datum/job/terragov/squad/smartgunner = SMARTIE_POINTS_REGULAR,
 		/datum/job/terragov/silicon/synthetic = SYNTH_POINTS_REGULAR,
 		/datum/job/terragov/command/mech_pilot = MECH_POINTS_REGULAR,
+		/datum/job/terragov/command/assault_crewman = ARMORED_VEHICLE_POINTS_REGULAR,
 	)
 	html_description = {"
 		<b>Difficulty</b>: Easy<br /><br />

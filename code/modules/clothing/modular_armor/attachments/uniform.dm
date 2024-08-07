@@ -22,9 +22,7 @@
 		/obj/item/ammo_magazine/smg,
 		/obj/item/ammo_magazine/sniper,
 		/obj/item/cell/lasgun,
-		//RUTGMC EDIT ADDITION  BEGIN - SOLDERING_TOOL
 		/obj/item/tool/surgery/solderingtool,
-		//RUTGMC EDIT ADDITION  END
 	)
 	cant_hold = list(
 		/obj/item/stack/razorwire,
@@ -123,6 +121,10 @@
 	desc = "A handgun holster"
 	icon_state = "holster"
 	storage = /obj/item/storage/internal/holster
+
+/obj/item/armor_module/storage/uniform/holster/Initialize(mapload, ...)
+	. = ..()
+	AddComponent(/datum/component/tac_reload_storage)
 
 /obj/item/armor_module/storage/uniform/holster/freelancer/Initialize(mapload)
 	. = ..()

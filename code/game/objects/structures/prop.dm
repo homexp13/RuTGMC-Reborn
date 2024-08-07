@@ -47,21 +47,13 @@
 	update_icon()
 
 /obj/machinery/prop/computer/ex_act(severity)
-	switch(severity)
-		if(EXPLODE_DEVASTATE)
+	if(severity >= EXPLODE_LIGHT && prob(severity /= 2))
+		if(prob(severity))
+			set_broken()
+		else
 			qdel(src)
-		if(EXPLODE_HEAVY)
-			if (prob(25))
-				qdel(src)
-				return
-			if (prob(50))
-				set_broken()
-		if(EXPLODE_LIGHT)
-			if (prob(25))
-				set_broken()
-		if(EXPLODE_WEAK)
-			if (prob(15))
-				set_broken()
+	else if(prob(severity / 3))
+		set_broken()
 
 /obj/machinery/prop/computer/proc/set_broken()
 	machine_stat |= BROKEN
@@ -75,6 +67,7 @@
 		set_light(initial(light_range))
 
 /obj/machinery/prop/computer/update_icon_state()
+	. = ..()
 	if(machine_stat & (BROKEN|DISABLED))
 		icon_state = "[initial(icon_state)]_broken"
 	else
@@ -1094,7 +1087,7 @@
 
 ///BROKEN VEHICLE PROPS
 /obj/structure/prop/vehicle
-	layer = TANK_BARREL_LAYER
+	layer = ABOVE_MOB_PROP_LAYER
 /obj/structure/prop/vehicle/van
 	name = "van"
 	desc = "An old van, seems to be broken down."
@@ -1242,7 +1235,7 @@
 
 /obj/structure/prop/vehicle/tank/east/barrel
 	icon_state = "ltb_cannon_0"
-	layer = TANK_BARREL_LAYER
+	layer = ABOVE_MOB_PROP_LAYER
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 
 /obj/structure/prop/vehicle/tank/east/barrel/broken

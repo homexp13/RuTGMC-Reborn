@@ -147,11 +147,11 @@
 		to_chat(src, span_warning("You are untouched by the flames."))
 		return
 
-	take_overall_damage(rand(10, burnlevel), BURN, FIRE, updating_health = TRUE, max_limbs = 4)
-	to_chat(src, span_warning("You are burned!"))
-
 	if(pass_flags & PASS_FIRE) //Pass fire allow to cross fire without being ignited
 		return
+
+	take_overall_damage(rand(10, burnlevel), BURN, FIRE, updating_health = TRUE, max_limbs = 4)
+	to_chat(src, span_warning("You are burned!"))
 
 	adjust_fire_stacks(burnlevel)
 	IgniteMob()
@@ -217,7 +217,7 @@
 		S.reagents?.reaction(src, TOUCH, S.fraction)
 	return protection
 
-/mob/living/proc/check_shields(attack_type, damage, damage_type = "melee", silent, penetration = 0)
+/mob/living/proc/check_shields(attack_type, damage, damage_type = MELEE, silent, penetration = 0)
 	if(!damage)
 		stack_trace("check_shields called without a damage value")
 		return 0

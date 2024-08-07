@@ -119,25 +119,23 @@
 
 /mob/living/carbon/xenomorph/proc/handle_living_plasma_updates()
 	var/turf/T = loc
-	if(!T || !istype(T))
+	if(!istype(T)) //This means plasma doesn't update while you're in things like a vent, but since you don't have weeds in a vent or can actually take advantage of pheros, this is fine
 		return
-	if(plasma_stored >= xeno_caste.plasma_max * xeno_caste.plasma_regen_limit)
+
+	if(!current_aura && (plasma_stored >= xeno_caste.plasma_max * xeno_caste.plasma_regen_limit)) //no loss or gain
 		return
 
 	if(current_aura)
 		if(plasma_stored < pheromone_cost)
-			use_plasma(plasma_stored)
+			use_plasma(plasma_stored, FALSE)
 			QDEL_NULL(current_aura)
 			src.balloon_alert(src, "Stop emitting, no plasma")
 		else
-			use_plasma(pheromone_cost)
+			use_plasma(pheromone_cost, FALSE)
 
-	if(HAS_TRAIT(src, TRAIT_NOPLASMAREGEN))
-		hud_set_plasma()
-		return
-
-	if(!loc_weeds_type && !(xeno_caste.caste_flags & CASTE_INNATE_PLASMA_REGEN))
-		hud_set_plasma() // since we used some plasma via the aura
+	if(HAS_TRAIT(src, TRAIT_NOPLASMAREGEN) || !loc_weeds_type && !(xeno_caste.caste_flags & CASTE_INNATE_PLASMA_REGEN))
+		if(current_aura) //we only need to update if we actually used plasma from pheros
+			hud_set_plasma()
 		return
 
 	var/plasma_gain = xeno_caste.plasma_gain
@@ -152,7 +150,6 @@
 	SEND_SIGNAL(src, COMSIG_XENOMORPH_PLASMA_REGEN, plasma_mod)
 
 	gain_plasma(plasma_mod[1])
-	hud_set_plasma() //update plasma amount on the plasma mob_hud
 
 /mob/living/carbon/xenomorph/can_receive_aura(aura_type, atom/source, datum/aura_bearer/bearer)
 	. = ..()
@@ -181,52 +178,90 @@
 	hud_set_pheromone()
 	..()
 
+/mob/living/carbon/xenomorph/proc/handle_interference()
+	if(interference)
+		interference = max(interference-2, 0)
+		SEND_SIGNAL(src, COMSIG_XENOMORPH_INTERFERENCE)
+
+	return interference
+
+//Possibly causes xenolags
 /mob/living/carbon/xenomorph/handle_regular_hud_updates()
 	if(!client)
 		return FALSE
 
-	// Sanity checks
-	if(!maxHealth)
-		stack_trace("[src] called handle_regular_hud_updates() while having [maxHealth] maxHealth.")
-		return
-	if(!xeno_caste.plasma_max)
-		stack_trace("[src] called handle_regular_hud_updates() while having [xeno_caste.plasma_max] xeno_caste.plasma_max.")
-		return
+	handle_regular_health_hud_updates()
 
-	// Health Hud
-	if(hud_used?.healths)
+	// Evolve Hud
+	if(hud_used && hud_used.alien_evolve_display)
+		hud_used.alien_evolve_display.overlays.Cut()
 		if(stat != DEAD)
-			var/bucket = get_bucket(XENO_HUD_ICON_BUCKETS, maxHealth, health, get_crit_threshold(), list("full", "critical"))
-			hud_used.healths.icon_state = "health[bucket]"
+			var/amount = 0
+			if(xeno_caste.evolution_threshold)
+				amount = round(evolution_stored * 100 / xeno_caste.evolution_threshold, 5)
+				hud_used.alien_evolve_display.icon_state = "evolve[amount]"
+				if(!hive.check_ruler() && !isxenolarva(src))
+					hud_used.alien_evolve_display.overlays += image('icons/mob/screen/alien_better.dmi', icon_state = "evolve_cant")
+				else
+					hud_used.alien_evolve_display.overlays -= image('icons/mob/screen/alien_better.dmi', icon_state = "evolve_cant")
+			else
+				hud_used.alien_evolve_display.icon_state = "evolve_empty"
 		else
-			hud_used.healths.icon_state = "health_dead"
+			hud_used.alien_evolve_display.icon_state = "evolve_empty"
 
-	// Plasma Hud
-	if(hud_used?.alien_plasma_display)
+	//Sunder Hud
+	if(hud_used && hud_used.alien_sunder_display)
+		hud_used.alien_sunder_display.overlays.Cut()
 		if(stat != DEAD)
-			var/bucket = get_bucket(XENO_HUD_ICON_BUCKETS, xeno_caste.plasma_max, plasma_stored, 0, list("full", "empty"))
-			hud_used.alien_plasma_display.icon_state = "power_display_[bucket]"
+			var/amount = round( 100 - sunder , 5)
+			hud_used.alien_sunder_display.icon_state = "sunder[amount]"
+			switch(amount)
+				if(80 to 100)
+					hud_used.alien_sunder_display.overlays += image('icons/mob/screen/alien_better.dmi', icon_state = "sunder_warn0")
+				if(60 to 80)
+					hud_used.alien_sunder_display.overlays += image('icons/mob/screen/alien_better.dmi', icon_state = "sunder_warn1")
+				if(40 to 60)
+					hud_used.alien_sunder_display.overlays += image('icons/mob/screen/alien_better.dmi', icon_state = "sunder_warn2")
+				if(20 to 40)
+					hud_used.alien_sunder_display.overlays += image('icons/mob/screen/alien_better.dmi', icon_state = "sunder_warn3")
+				if(0 to 20)
+					hud_used.alien_sunder_display.overlays += image('icons/mob/screen/alien_better.dmi', icon_state = "sunder_warn4")
 		else
-			hud_used.alien_plasma_display.icon_state = "power_display_empty"
-
+			hud_used.alien_sunder_display.icon_state = "sunder0"
 
 	interactee?.check_eye(src)
 
 	return TRUE
 
-/mob/living/carbon/xenomorph/proc/handle_environment() //unused while atmos is not on
-	var/env_temperature = loc.return_temperature()
-	if(!(xeno_caste.caste_flags & CASTE_FIRE_IMMUNE))
-		if(env_temperature > (T0C + 66))
-			apply_damage(((env_temperature - (T0C + 66) ) * 0.2), BURN, blocked = FIRE)
-			updatehealth() //unused while atmos is off
-			if(hud_used?.fire_icon)
-				hud_used.fire_icon.icon_state = "fire2"
-			if(prob(20))
-				to_chat(src, span_warning("We feel a searing heat!"))
+/mob/living/carbon/xenomorph/proc/handle_regular_health_hud_updates()
+	if(!client)
+		return FALSE
+
+	// Sanity checks
+	if(!maxHealth)
+		stack_trace("[src] called handle_regular_health_hud_updates() while having [maxHealth] maxHealth.")
+		return
+	if(!xeno_caste.plasma_max)
+		stack_trace("[src] called handle_regular_health_hud_updates() while having [xeno_caste.plasma_max] xeno_caste.plasma_max.")
+		return
+
+	// Health Hud
+	if(hud_used && hud_used.healths)
+		if(stat != DEAD)
+			var/amount = round(health * 100 / maxHealth, 5)
+			if(health < 0)
+				amount = 0 //We dont want crit sprite only at 0 health
+			hud_used.healths.icon_state = "health[amount]"
 		else
-			if(hud_used?.fire_icon)
-				hud_used.fire_icon.icon_state = "fire0"
+			hud_used.healths.icon_state = "health_dead"
+
+	// Plasma Hud
+	if(hud_used && hud_used.alien_plasma_display)
+		if(stat != DEAD)
+			var/amount = round(plasma_stored * 100 / xeno_caste.plasma_max, 5)
+			hud_used.alien_plasma_display.icon_state = "power_display_[amount]"
+		else
+			hud_used.alien_plasma_display.icon_state = "power_display_0"
 
 /mob/living/carbon/xenomorph/updatehealth()
 	if(status_flags & GODMODE)
@@ -237,6 +272,7 @@
 	med_hud_set_health()
 	update_stat()
 	update_wounds()
+	handle_regular_health_hud_updates()
 
 /mob/living/carbon/xenomorph/handle_slowdown()
 	if(slowdown)

@@ -31,6 +31,22 @@
 	REMOVE_TRAIT(owner, TRAIT_STAGGERED, TRAIT_STATUS_EFFECT(id))
 	owner.adjust_mob_scatter(-5)
 
+//OFFGUARD SLOWDOWN
+/datum/status_effect/incapacitating/offguard_slowdown
+	id = "offguard_slow"
+	status_type = STATUS_EFFECT_REPLACE
+	var/off_guard_slowdown = 9
+
+/datum/status_effect/incapacitating/offguard_slowdown/on_apply()
+	. = ..()
+	if(!.)
+		return
+	owner.add_movespeed_modifier(MOVESPEED_ID_OFF_GUARD_SLOWDOWN, TRUE, 0, NONE, TRUE, off_guard_slowdown)
+
+/datum/status_effect/incapacitating/offguard_slowdown/on_remove()
+	owner.remove_movespeed_modifier(MOVESPEED_ID_OFF_GUARD_SLOWDOWN)
+	return ..()
+
 //STUN
 /datum/status_effect/incapacitating/stun
 	id = "stun"
@@ -426,7 +442,9 @@
 	return ..()
 
 /datum/status_effect/spacefreeze
+	alert_type = /atom/movable/screen/alert/status_effect/spacefreeze
 	id = "spacefreeze"
+	alert_type = /atom/movable/screen/alert/status_effect/spacefreeze
 
 /datum/status_effect/spacefreeze/on_creation(mob/living/new_owner)
 	. = ..()
@@ -434,6 +452,10 @@
 
 /datum/status_effect/spacefreeze/tick()
 	owner.adjustFireLoss(40)
+
+/atom/movable/screen/alert/status_effect/spacefreeze
+	name = "Spacefreeze"
+	desc = "The space is freezing you to death!"
 
 /datum/status_effect/spacefreeze/light
 	id = "spacefreeze_light"
@@ -820,3 +842,8 @@
 	scale = generator(GEN_VECTOR, list(0.6, 0.6), list(1, 1), NORMAL_RAND)
 	friction = -0.05
 	color = "#818181"
+
+/atom/movable/screen/alert/status_effect/spacefreeze
+	name = "Freezing"
+	desc = "Space is very very cold, who would've thought?"
+	icon_state = "cold3"

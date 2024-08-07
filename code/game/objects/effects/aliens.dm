@@ -35,6 +35,7 @@
 /obj/effect/xenomorph/spray
 	name = "splatter"
 	desc = "It burns! It burns like hygiene!"
+	icon = 'icons/Xeno/Effects.dmi'
 	icon_state = "acid2"
 	density = FALSE
 	opacity = FALSE
@@ -57,6 +58,7 @@
 	RegisterSignal(xeno_owner, COMSIG_QDELETING, PROC_REF(clean_mob_owner))
 	RegisterSignal(loc, COMSIG_ATOM_ENTERED, PROC_REF(atom_enter_turf))
 	TIMER_COOLDOWN_START(src, COOLDOWN_PARALYSE_ACID, 5)
+	animate(src, duration, alpha = 20)
 
 /obj/effect/xenomorph/spray/Destroy()
 	STOP_PROCESSING(SSprocessing, src)
@@ -115,6 +117,12 @@
 
 		var/atom/A = H
 		SEND_SIGNAL(A, COMSIG_ATOM_ACIDSPRAY_ACT, src, acid_damage, slow_amt)
+
+/obj/effect/xenomorph/spray/strong
+	icon_state = "acid2-strong"
+
+/obj/effect/xenomorph/spray/weak
+	icon_state = "acid2-weak"
 
 //Medium-strength acid
 /obj/effect/xenomorph/acid
@@ -210,18 +218,3 @@
 			visible_message(span_xenowarning("\The [acid_t]\s structure is being melted by the acid!"))
 		if(6)
 			visible_message(span_xenowarning("\The [acid_t] is barely holding up against the acid!"))
-
-/obj/effect/xenomorph/warp_shadow
-	name = "warp shadow"
-	desc = "A strange rift in space and time. You probably shouldn't touch this."
-	icon = 'icons/Xeno/castes/wraith.dmi'
-	icon_state = "Wraith Walking"
-	color = COLOR_BLACK
-	alpha = 128 //Translucent
-	density = FALSE
-	opacity = FALSE
-	anchored = TRUE
-
-/obj/effect/xenomorph/warp_shadow/Initialize(mapload, target)
-	. = ..()
-	add_filter("wraith_warp_shadow", 4, list("type" = "blur", 5)) //Cool filter appear

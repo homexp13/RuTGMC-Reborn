@@ -73,7 +73,7 @@
 	)
 
 /datum/action/ability/activable/xeno/defile/on_cooldown_finish()
-	playsound(owner.loc, 'sound/voice/alien_drool1.ogg', 50, 1)
+	playsound(owner.loc, 'sound/voice/alien/drool1.ogg', 50, 1)
 	to_chat(owner, span_xenodanger("You feel your toxin accelerant glands refill. You can use Defile again."))
 	return ..()
 
@@ -110,7 +110,7 @@
 	X.face_atom(living_target)
 	X.do_attack_animation(living_target)
 	playsound(living_target, 'sound/effects/spray3.ogg', 15, TRUE)
-	playsound(living_target, pick('sound/voice/alien_drool1.ogg', 'sound/voice/alien_drool2.ogg'), 15, 1)
+	playsound(living_target, pick('sound/voice/alien/drool1.ogg', 'sound/voice/alien/drool2.ogg'), 15, 1)
 	to_chat(X, span_xenodanger("Our stinger successfully discharges accelerant into our victim."))
 	to_chat(living_target, span_danger("You feel horrible pain as something sharp forcibly pierces your thorax."))
 	living_target.apply_damage(50, STAMINA)
@@ -176,7 +176,7 @@
 	var/obj/effect/abstract/particle_holder/particle_holder
 
 /datum/action/ability/xeno_action/emit_neurogas/on_cooldown_finish()
-	playsound(owner.loc, 'sound/effects/xeno_newlarva.ogg', 50, 0)
+	playsound(owner.loc, 'sound/effects/alien/newlarva.ogg', 50, 0)
 	to_chat(owner, span_xenodanger("We feel our dorsal vents bristle with heated gas. We can emit Noxious Gas again."))
 	return ..()
 
@@ -292,7 +292,8 @@
 	name = "Inject Gas"
 	action_icon_state = "inject_egg"
 	desc = "Inject an egg with toxins, killing the larva, but filling it full with gas ready to explode."
-	ability_cost = 100
+	ability_cost = 80
+	keybind_flags = null
 	cooldown_duration = 5 SECONDS
 	keybind_flags = ABILITY_KEYBIND_USE_ABILITY
 	keybinding_signals = list(
@@ -300,7 +301,7 @@
 	)
 
 /datum/action/ability/activable/xeno/inject_egg_neurogas/on_cooldown_finish()
-	playsound(owner.loc, 'sound/effects/xeno_newlarva.ogg', 50, 0)
+	playsound(owner.loc, 'sound/effects/alien/newlarva.ogg', 50, 0)
 	to_chat(owner, span_xenodanger("We feel our stinger fill with toxins. We can inject an egg with gas again."))
 	return ..()
 
@@ -455,7 +456,7 @@
 	reagent_slash_reagent = X.selected_reagent
 
 	X.balloon_alert(X, "Reagent slash active") //Let the user know
-	X.playsound_local(X, 'sound/voice/alien_drool2.ogg', 25)
+	X.playsound_local(X, 'sound/voice/alien/drool2.ogg', 25)
 
 	toggle_particles(TRUE)
 	succeed_activate()
@@ -472,7 +473,7 @@
 	toggle_particles(FALSE)
 
 	X.balloon_alert(X, "Reagent slash over") //Let the user know
-	X.playsound_local(X, 'sound/voice/hiss5.ogg', 25)
+	X.playsound_local(X, 'sound/voice/alien/hiss8.ogg', 25)
 
 
 ///Called when we slash while reagent slash is active
@@ -482,12 +483,24 @@
 	if(!target?.can_sting()) //We only care about targets that we can actually sting
 		return
 
-	var/mob/living/carbon/xenomorph/X = owner
+	var/mob/living/carbon/xenomorph/xeno_owner = owner
 	var/mob/living/carbon/carbon_target = target
 
-	carbon_target.reagents.add_reagent(reagent_slash_reagent, DEFILER_REAGENT_SLASH_INJECT_AMOUNT)
-	playsound(carbon_target, 'sound/effects/spray3.ogg', 15, TRUE)
-	X.visible_message(carbon_target, span_danger("[carbon_target] is pricked by [X]'s spines!"))
+	if(xeno_owner.selected_reagent == /datum/reagent/toxin/acid)
+		if(HAS_TRAIT(carbon_target, TRAIT_INTOXICATION_IMMUNE))
+			carbon_target.balloon_alert(xeno_owner, "Immune to Intoxication")
+			return
+
+		playsound(carbon_target, 'sound/effects/spray3.ogg', 20, TRUE)
+		if(carbon_target.has_status_effect(STATUS_EFFECT_INTOXICATED))
+			var/datum/status_effect/stacking/intoxicated/debuff = carbon_target.has_status_effect(STATUS_EFFECT_INTOXICATED)
+			debuff.add_stacks(SENTINEL_TOXIC_SLASH_STACKS_PER + xeno_owner.xeno_caste.additional_stacks)
+		else
+			carbon_target.apply_status_effect(STATUS_EFFECT_INTOXICATED, SENTINEL_TOXIC_SLASH_STACKS_PER + xeno_owner.xeno_caste.additional_stacks)
+	else
+		carbon_target.reagents.add_reagent(reagent_slash_reagent, DEFILER_REAGENT_SLASH_INJECT_AMOUNT)
+		playsound(carbon_target, 'sound/effects/spray3.ogg', 15, TRUE)
+		xeno_owner.visible_message(carbon_target, span_danger("[carbon_target] is pricked by [xeno_owner]'s spines!"))
 
 	GLOB.round_statistics.defiler_reagent_slashes++ //Statistics
 	SSblackbox.record_feedback("tally", "round_statistics", 1, "defiler_reagent_slashes")
@@ -495,12 +508,12 @@
 	reagent_slash_count-- //Decrement the reagent slash count
 
 	if(!reagent_slash_count) //Deactivate if we have no reagent slashes remaining
-		reagent_slash_deactivate(X)
+		reagent_slash_deactivate(xeno_owner)
 
 
 /datum/action/ability/xeno_action/reagent_slash/on_cooldown_finish()
 	to_chat(owner, span_xenodanger("We are able to infuse our spines with toxins again."))
-	owner.playsound_local(owner, 'sound/effects/xeno_newlarva.ogg', 25, 0, 1)
+	owner.playsound_local(owner, 'sound/effects/alien/newlarva.ogg', 25, 0, 1)
 	return ..()
 
 // Toggles particles on or off, depending on the defined var.
@@ -619,3 +632,37 @@
 #undef DEFILER_HEMODILE
 #undef DEFILER_TRANSVITOX
 #undef DEFILER_OZELOMELYN
+
+///Called when we slash while reagent slash is active
+/datum/action/ability/xeno_action/reagent_slash/reagent_slash(datum/source, mob/living/target, damage, list/damage_mod, list/armor_mod)
+	var/mob/living/carbon/xenomorph/xeno_owner = owner
+	if(xeno_owner.selected_reagent == /datum/reagent/toxin/acid)
+
+		if(!target?.can_sting()) //We only care about targets that we can actually sting
+			return
+
+		var/mob/living/carbon/xeno_target = target
+
+		if(HAS_TRAIT(xeno_target, TRAIT_INTOXICATION_IMMUNE))
+			xeno_target.balloon_alert(xeno_owner, "Immune to Intoxication")
+			return
+
+		playsound(xeno_target, 'sound/effects/spray3.ogg', 20, TRUE)
+		if(xeno_target.has_status_effect(STATUS_EFFECT_INTOXICATED))
+			var/datum/status_effect/stacking/intoxicated/debuff = xeno_target.has_status_effect(STATUS_EFFECT_INTOXICATED)
+			debuff.add_stacks(SENTINEL_TOXIC_SLASH_STACKS_PER + xeno_owner.xeno_caste.additional_stacks)
+		else
+			xeno_target.apply_status_effect(STATUS_EFFECT_INTOXICATED, SENTINEL_TOXIC_SLASH_STACKS_PER + xeno_owner.xeno_caste.additional_stacks)
+
+		GLOB.round_statistics.defiler_reagent_slashes++ //Statistics
+		SSblackbox.record_feedback("tally", "round_statistics", 1, "defiler_reagent_slashes")
+
+		reagent_slash_count-- //Decrement the toxic slash count
+
+		if(!reagent_slash_count) //Deactivate if we have no reagent slashes remaining
+			reagent_slash_deactivate(xeno_owner)
+
+		return
+
+	return ..()
+

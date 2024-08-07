@@ -99,7 +99,7 @@ GLOBAL_LIST_INIT(hugger_images_list,  list(
 		F.kill_hugger()
 		huggers++
 		if(message)
-			playsound(src, 'sound/voice/alien_drool2.ogg', 50, 0, 1)
+			playsound(src, 'sound/voice/alien/drool2.ogg', 50, 0, 1)
 			to_chat(src, span_notice("We salvage this young one's biomass to produce another. Now sheltering: [huggers] / [xeno_caste.huggers_max]."))
 	else if(message)
 		to_chat(src, span_warning("We can't carry any more facehuggers!"))
@@ -109,9 +109,9 @@ GLOBAL_LIST_INIT(hugger_images_list,  list(
 // ***************************************
 /datum/action/ability/xeno_action/place_trap
 	name = "Place trap"
-	action_icon_state = "place_trap"
-	desc = "Place a hole on weeds that can be filled with a hugger or acid. Activates when a marine steps on it."
-	ability_cost = 400
+	desc = "Place a hole on weeds that can be filled with a hugger, liquid acid, acid or neurotoxin gas. Activates when a marine steps on it."
+	action_icon_state = "small_trap"
+	ability_cost = 200
 	keybinding_signals = list(
 		KEYBINDING_NORMAL = COMSIG_XENOABILITY_PLACE_TRAP,
 	)
@@ -152,7 +152,7 @@ GLOBAL_LIST_INIT(hugger_images_list,  list(
 	name = "Spawn Facehugger"
 	action_icon_state = "spawn_hugger"
 	desc = "Spawn a facehugger that is stored on your body."
-	ability_cost = 200
+	ability_cost = 100
 	cooldown_duration = 10 SECONDS
 	keybinding_signals = list(
 		KEYBINDING_NORMAL = COMSIG_XENOABILITY_SPAWN_HUGGER,
@@ -161,7 +161,7 @@ GLOBAL_LIST_INIT(hugger_images_list,  list(
 
 /datum/action/ability/xeno_action/spawn_hugger/on_cooldown_finish()
 	to_chat(owner, span_xenodanger("We can now spawn another young one."))
-	owner.playsound_local(owner, 'sound/effects/xeno_newlarva.ogg', 25, 0, 1)
+	owner.playsound_local(owner, 'sound/effects/alien/newlarva.ogg', 25, 0, 1)
 	return ..()
 
 /datum/action/ability/xeno_action/spawn_hugger/can_use_action(silent = FALSE, override_flags)
@@ -179,12 +179,37 @@ GLOBAL_LIST_INIT(hugger_images_list,  list(
 
 	caster.huggers++
 	to_chat(caster, span_xenowarning("We spawn a young one via the miracle of asexual internal reproduction, adding it to our stores. Now sheltering: [caster.huggers] / [caster.xeno_caste.huggers_max]."))
-	playsound(caster, 'sound/voice/alien_drool2.ogg', 50, 0, 1)
+	playsound(caster, 'sound/voice/alien/drool2.ogg', 50, 0, 1)
 	succeed_activate()
 	add_cooldown()
 	if(owner.client)
 		var/datum/personal_statistics/personal_statistics = GLOB.personal_statistics_list[owner.ckey]
 		personal_statistics.huggers_created++
+
+// ***************************************
+// *********** Set Hugger Reserve
+// ***************************************
+// Set hugger reserve
+/datum/action/ability/xeno_action/set_hugger_reserve
+	name = "Set Hugger Reserve"
+	action_icon_state = "hugger_set"
+	desc = "Set the number of huggers you want to preserve from the observers' possession."
+	use_state_flags = ABILITY_USE_LYING
+
+/datum/action/ability/xeno_action/set_hugger_reserve/give_action(mob/living/L)
+	. = ..()
+	var/mob/living/carbon/xenomorph/carrier/caster = owner
+	caster.huggers_reserved = caster.xeno_caste.huggers_max
+
+/datum/action/ability/xeno_action/set_hugger_reserve/action_activate()
+	var/mob/living/carbon/xenomorph/carrier/caster = owner
+	var/number = tgui_input_number(usr, "How many facehuggers would you like to keep safe from Observers wanting to join as facehuggers?", "How many to reserve?", caster.huggers_reserved, caster.xeno_caste.huggers_max)
+	if(!isnull(number))
+		caster.huggers_reserved = number
+	to_chat(caster, span_notice("You reserved [caster.huggers_reserved] facehuggers for yourself."))
+	caster.balloon_alert(caster, "Reserved [caster.huggers_reserved] facehuggers")
+
+	return succeed_activate()
 
 // ***************************************
 // *********** Drop all hugger, panic button
@@ -418,8 +443,8 @@ GLOBAL_LIST_INIT(hugger_images_list,  list(
 	victim.apply_damage(stamina_dmg, STAMINA)
 
 	var/datum/internal_organ/O
-	for(var/i in list("heart", "lungs", "liver"))
-		O = victim.internal_organs_by_name[i]
+	for(var/i in list(ORGAN_SLOT_HEART, ORGAN_SLOT_LUNGS, ORGAN_SLOT_LIVER))
+		O = victim.get_organ_slot(i)
 		O.take_damage(debuff, TRUE)
 
 	young.adjust_boost_timer(20, 40)

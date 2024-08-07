@@ -1,13 +1,9 @@
-//RUTGMC EDIT CHANGE BEGIN
-//#define NEST_RESIST_TIME 2.5 SECONDS //ORIGINAL
-//#define NEST_UNBUCKLED_COOLDOWN 5 SECONDS
-#define NEST_RESIST_TIME 80 SECONDS //RUTGMC EDIT
+#define NEST_RESIST_TIME 80 SECONDS
 #define NEST_UNBUCKLED_COOLDOWN 15 SECONDS
-//RUTGMC EDIT CHANGE END
 
 ///Alium nests. Essentially beds with an unbuckle delay that only aliums can buckle mobs to.
 /obj/structure/bed/nest
-	name = "alien nest"
+	name = ALIEN_NEST
 	desc = "It's a gruesome pile of thick, sticky resin shaped like a nest."
 	icon = 'icons/Xeno/Effects.dmi'
 	icon_state = "nest"
@@ -30,16 +26,26 @@
 		to_chat(user, span_notice("You place [M] on [src]."))
 		M.forceMove(loc)
 
-//RUTGMC EDIT BEGIN - Moved to modular_RUtgmc\code\game\objects\structures\stool_bed_chair_nest\xeno_nest.dm
-/*
-/obj/structure/bed/nest/attack_alien(mob/living/carbon/xenomorph/X, damage_amount = X.xeno_caste.melee_damage, damage_type = BRUTE, damage_flag = "", effects = TRUE, armor_penetration = 0, isrightclick = FALSE)
-	if(X.a_intent != INTENT_HARM)
-		return attack_hand(X)
-	return ..()
-*/ //RUTGMC EDIT END
+/obj/structure/bed/nest/attack_alien(mob/living/carbon/xenomorph/xeno_attacker, damage_amount = xeno_attacker.xeno_caste.melee_damage, damage_type = BRUTE, damage_flag = MELEE, effects = TRUE, armor_penetration = 0, isrightclick = FALSE)
+	if(xeno_attacker.status_flags & INCORPOREAL)
+		return
 
+	xeno_attacker.visible_message(span_xenonotice("\The [xeno_attacker] starts tearing down \the [src]!"), \
+	span_xenonotice("We start to tear down \the [src]."))
+	if(!do_after(xeno_attacker, 4 SECONDS, NONE, xeno_attacker, BUSY_ICON_GENERIC))
+		return
+	if(!istype(src)) // Prevent jumping to other turfs if do_after completes with the wall already gone
+		return
+	xeno_attacker.do_attack_animation(src, ATTACK_EFFECT_CLAW)
+	xeno_attacker.visible_message(span_xenonotice("\The [xeno_attacker] tears down \the [src]!"), \
+	span_xenonotice("We tear down \the [src]."))
+	playsound(src, "alien_resin_break", 25)
+	take_damage(max_integrity) // Ensure its destroyed
 
 /obj/structure/bed/nest/user_buckle_mob(mob/living/buckling_mob, mob/user, check_loc = TRUE, silent)
+	if(isxenohivemind(user))
+		to_chat(user, span_warning("We lack limbs to do that."))
+		return FALSE
 	if(user.incapacitated() || !in_range(user, src) || buckling_mob.buckled)
 		return FALSE
 	if(!isxeno(user))
@@ -53,11 +59,6 @@
 		if(TIMER_COOLDOWN_CHECK(H, COOLDOWN_NEST))
 			to_chat(user, span_warning("[H] was recently unbuckled. Wait a bit."))
 			return FALSE
-		//RUTGMC EDIT REMOVAL BEGIN
-		/*if(!H.lying_angle)
-			to_chat(user, span_warning("[H] is resisting, ground [H.p_them()]."))
-			return FALSE */
-		//RUTGMC EDIT END
 
 	user.visible_message(span_warning("[user] pins [buckling_mob] into [src], preparing the securing resin."),
 	span_warning("[user] pins [buckling_mob] into [src], preparing the securing resin."))
@@ -69,11 +70,6 @@
 	if(LAZYLEN(buckled_mobs))
 		to_chat(user, span_warning("There's already someone in [src]."))
 		return FALSE
-	//RUTGMC EDIT REMOVAL BEGIN
-	/*if(ishuman(buckling_mob) && !buckling_mob.lying_angle) //Improperly stunned Marines won't be nested
-		to_chat(user, span_warning("[buckling_mob] is resisting, ground [buckling_mob.p_them()]."))
-		return FALSE */
-	//RUTGMC EDIT END
 
 	buckling_mob.visible_message(span_xenonotice("[user] secretes a thick, vile resin, securing [buckling_mob] into [src]!"),
 		span_xenonotice("[user] drenches you in a foul-smelling resin, trapping you in [src]!"),
@@ -83,7 +79,6 @@
 	silent = TRUE
 	return ..()
 
-
 /obj/structure/bed/nest/user_unbuckle_mob(mob/living/buckled_mob, mob/user, silent)
 	if(buckled_mob != user)
 		if(user.incapacitated())
@@ -92,14 +87,11 @@
 			span_notice("\The [user] pulls you free from \the [src]."),
 			span_notice("You hear squelching."))
 		playsound(loc, "alien_resin_move", 50)
-		//TIMER_COOLDOWN_START(user, COOLDOWN_NEST, NEST_UNBUCKLED_COOLDOWN) //RUTGMC EDIT REMOVAL
 		silent = TRUE
 		return ..()
-// RU TGMC EDIT
 	if(force_nest)
 		to_chat(buckled_mob, span_warning("Nest to thick, you can't resist."))
 		return FALSE
-// RU TGMC EDIT
 	if(buckled_mob.incapacitated(TRUE))
 		to_chat(buckled_mob, span_warning("You're currently unable to try that."))
 		return FALSE
@@ -119,7 +111,6 @@
 	silent = TRUE
 	return ..()
 
-
 /obj/structure/bed/nest/proc/unbuckle_time_message(mob/living/user)
 	if(QDELETED(user) || !(user in buckled_mobs))
 		return //Time has passed, conditions may have changed.
@@ -127,11 +118,11 @@
 		return //We've been freed and re-nested.
 	to_chat(user, span_danger("You are ready to break free! Resist once more to free yourself!"))
 
-
 /obj/structure/bed/nest/post_buckle_mob(mob/living/buckling_mob)
 	. = ..()
 	ENABLE_BITFIELD(buckling_mob.restrained_flags, RESTRAINED_XENO_NEST)
 	buckling_mob.pulledby?.stop_pulling()
+	buckling_mob.reagents.add_reagent(/datum/reagent/medicine/xenojelly, 15)
 
 /obj/structure/bed/nest/post_unbuckle_mob(mob/living/buckled_mob)
 	. = ..()
@@ -139,13 +130,12 @@
 	if(QDELETED(buckled_mob))
 		return
 	DISABLE_BITFIELD(buckled_mob.restrained_flags, RESTRAINED_XENO_NEST)
-
+	TIMER_COOLDOWN_START(buckled_mob, COOLDOWN_NEST, NEST_UNBUCKLED_COOLDOWN)
 
 /obj/structure/bed/nest/update_overlays()
 	. = ..()
 	if(LAZYLEN(buckled_mobs))
 		. += image("icon_state" = "nest_overlay", "layer" = LYING_MOB_LAYER + 0.1)
-
 
 /obj/structure/bed/nest/flamer_fire_act(burnlevel)
 	take_damage(burnlevel * 2, BURN, FIRE)

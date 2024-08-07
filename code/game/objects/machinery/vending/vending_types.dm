@@ -165,6 +165,7 @@
 			/obj/item/storage/pill_bottle/kelotane = 15,
 			/obj/item/storage/pill_bottle/tramadol = 15,
 			/obj/item/storage/pill_bottle/tricordrazine = 15,
+			/obj/item/storage/pill_bottle/combatmix = 15,
 			/obj/item/storage/pill_bottle/dylovene = 15,
 			/obj/item/storage/pill_bottle/inaprovaline = 15,
 			/obj/item/storage/pill_bottle/isotonic = 15,
@@ -173,12 +174,10 @@
 			/obj/item/storage/pill_bottle/spaceacillin = 6,
 			/obj/item/storage/pill_bottle/alkysine = 6,
 			/obj/item/storage/pill_bottle/imidazoline = 6,
-			/obj/item/storage/pill_bottle/quickclot = 6,
 			/obj/item/storage/pill_bottle/hypervene = 6,
 		),
 		"Hypospray" = list (
 			/obj/item/reagent_containers/hypospray/autoinjector/dexalinplus = 10,
-			/obj/item/reagent_containers/hypospray/autoinjector/sleeptoxin = 10,
 			/obj/item/reagent_containers/hypospray/advanced = 5,
 			/obj/item/reagent_containers/hypospray/advanced/bicaridine = 5,
 			/obj/item/reagent_containers/hypospray/advanced/kelotane = 5,
@@ -187,23 +186,22 @@
 			/obj/item/reagent_containers/hypospray/advanced/dylovene = 5,
 		),
 		"Reagent Bottle" = list(
-			/obj/item/reagent_containers/glass/bottle/bicaridine = 6,
-			/obj/item/reagent_containers/glass/bottle/kelotane = 6,
-			/obj/item/reagent_containers/glass/bottle/tramadol = 6,
-			/obj/item/reagent_containers/glass/bottle/tricordrazine = 6,
-			/obj/item/reagent_containers/glass/bottle/dylovene = 6,
-			/obj/item/reagent_containers/glass/bottle/inaprovaline = 6,
-			/obj/item/reagent_containers/glass/bottle/paracetamol = 6,
-			/obj/item/reagent_containers/glass/bottle/isotonic = 6,
-			/obj/item/reagent_containers/glass/bottle/dexalin = 6,
+			/obj/item/reagent_containers/glass/bottle/bicaridine = -1,
+			/obj/item/reagent_containers/glass/bottle/kelotane = -1,
+			/obj/item/reagent_containers/glass/bottle/tramadol = -1,
+			/obj/item/reagent_containers/glass/bottle/tricordrazine = -1,
+			/obj/item/reagent_containers/glass/bottle/combatmix = -1,
+			/obj/item/reagent_containers/glass/bottle/dylovene = -1,
+			/obj/item/reagent_containers/glass/bottle/inaprovaline = -1,
+			/obj/item/reagent_containers/glass/bottle/paracetamol = -1,
+			/obj/item/reagent_containers/glass/bottle/isotonic = -1,
+			/obj/item/reagent_containers/glass/bottle/dexalin = -1,
 			/obj/item/reagent_containers/glass/bottle/spaceacillin = 6,
-			/obj/item/reagent_containers/glass/bottle/oxycodone = 6,
 			/obj/item/reagent_containers/glass/bottle/sleeptoxin = 6,
 			/obj/item/reagent_containers/glass/bottle/polyhexanide = 6,
 		),
 		"Chemistry Equipment" = list(
 			/obj/item/reagent_containers/syringe = -1,
-			/obj/item/storage/syringe_case/empty = -1,
 			/obj/item/reagent_containers/glass/beaker = -1,
 			/obj/item/reagent_containers/glass/beaker/large = -1,
 			/obj/item/reagent_containers/glass/beaker/vial = -1,
@@ -239,7 +237,6 @@
 	products = list(
 		"Hypospray" = list (
 			/obj/item/reagent_containers/hypospray/autoinjector/dexalinplus = -1,
-			/obj/item/reagent_containers/hypospray/autoinjector/sleeptoxin = -1,
 			/obj/item/reagent_containers/hypospray/advanced = -1,
 			/obj/item/reagent_containers/hypospray/advanced/bicaridine = -1,
 			/obj/item/reagent_containers/hypospray/advanced/kelotane = -1,
@@ -265,6 +262,7 @@
 			/obj/item/reagent_containers/glass/bottle/lemoline = -1,
 			/obj/item/reagent_containers/glass/bottle/nanoblood = -1,
 			/obj/item/reagent_containers/glass/bottle/doctor_delight = -1,
+			/obj/item/reagent_containers/glass/bottle/medicalnanites = -1,
 		),
 		"Pill Bottle" = list(
 			/obj/item/storage/pill_bottle/bicaridine = -1,
@@ -382,7 +380,6 @@
 	desc = "Dedicated for the surgeon with wings, this humble box contains a lot for its size."
 	products = list(
 		"Autoinjectors" = list(
-			/obj/item/reagent_containers/hypospray/autoinjector/sleeptoxin = 2,
 			/obj/item/reagent_containers/hypospray/autoinjector/bicaridine = 1,
 			/obj/item/reagent_containers/hypospray/autoinjector/kelotane = 1,
 			/obj/item/reagent_containers/hypospray/autoinjector/dylovene = 1,
@@ -402,7 +399,6 @@
 			/obj/item/reagent_containers/glass/bottle/kelotane = 1,
 			/obj/item/reagent_containers/glass/bottle/dexalin = 1,
 			/obj/item/reagent_containers/glass/bottle/tramadol = 1,
-			/obj/item/reagent_containers/glass/bottle/oxycodone = 1,
 			/obj/item/reagent_containers/glass/bottle/polyhexanide = 1,
 		),
 		"Heal Pack" = list(

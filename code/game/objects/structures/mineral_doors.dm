@@ -75,7 +75,8 @@
 	update_icon()
 	addtimer(VARSET_CALLBACK(src, switching_states, FALSE), 1 SECONDS)
 
-/obj/structure/mineral_door/update_icon()
+/obj/structure/mineral_door/update_icon_state()
+	. = ..()
 	if(open)
 		icon_state = "[base_icon_state][smoothing_flags ? "-[smoothing_junction]" : ""]-open"
 	else
@@ -106,6 +107,11 @@
 		for(var/i in 1 to rand(1,5))
 			new material_type(get_turf(src))
 	return ..()
+
+/obj/structure/mineral_door/get_explosion_resistance()
+	if(CHECK_BITFIELD(resistance_flags, INDESTRUCTIBLE))
+		return EXPLOSION_MAX_POWER
+	return density ? obj_integrity : 0
 
 /obj/structure/mineral_door/iron
 	name = "iron door"

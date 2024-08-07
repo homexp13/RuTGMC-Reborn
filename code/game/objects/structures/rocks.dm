@@ -1,4 +1,3 @@
-//ROCKS
 /obj/structure/rock
 	name = "rock"
 	desc = "A rock. You shouldn't see this one."
@@ -10,14 +9,11 @@
 	density = TRUE
 	anchored = TRUE
 	layer = ABOVE_TURF_LAYER
+	allow_pass_flags = PASSABLE|PASS_DEFENSIVE_STRUCTURE
 
 /obj/structure/rock/ex_act(severity)
-	switch(severity)
-		if(EXPLODE_DEVASTATE)
-			qdel(src)
-		if(EXPLODE_HEAVY)
-			if(prob(30))
-				qdel(src)
+	if(prob(severity / 3))
+		qdel(src)
 
 /obj/structure/rock/add_debris_element()
 	AddElement(/datum/element/debris, DEBRIS_ROCK, -10, 5, 1)

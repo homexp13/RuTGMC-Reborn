@@ -32,6 +32,8 @@
 	///Faction of that squad
 	var/faction = FACTION_TERRAGOV
 
+	var/list/squad_orbital_beacons = list()
+
 
 /datum/squad/alpha
 	name = "Alpha"
@@ -141,13 +143,6 @@
 )
 
 /datum/squad/New(set_color, set_name)
-	if(set_color)
-		color = set_color
-	if(set_name)
-		name = set_name
-
-	..()
-
 	tracking_id = SSdirection.init_squad(name, squad_leader)
 
 	for(var/state in GLOB.playable_squad_icons)
@@ -158,6 +153,7 @@
 
 		var/icon_state = lowertext(name) + "_" + state
 		GLOB.minimap_icons[icon_state] = icon2base64(top)
+
 
 /datum/squad/Destroy(force, ...)
 	for(var/mob/living/carbon/human/squaddie AS in marines_list)
@@ -298,7 +294,7 @@
 			R.use_command = FALSE
 		var/obj/item/card/id/ID = squad_leader.get_idcard()
 		if(istype(ID))
-			ID.access -= list(ACCESS_MARINE_LEADER, ACCESS_MARINE_DROPSHIP)
+			ID.access -= list(ACCESS_MARINE_LEADER, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_TADPOLE)
 
 	to_chat(squad_leader, "<font size='3' color='blue'>You're no longer the Squad Leader for [src]!</font>")
 	var/mob/living/carbon/human/H = squad_leader
@@ -323,7 +319,7 @@
 		squad_leader.comm_title = "aSL"
 		var/obj/item/card/id/ID = squad_leader.get_idcard()
 		if(istype(ID))
-			ID.access += list(ACCESS_MARINE_LEADER, ACCESS_MARINE_DROPSHIP)
+			ID.access += list(ACCESS_MARINE_LEADER, ACCESS_MARINE_DROPSHIP, ACCESS_MARINE_TADPOLE)
 
 	if(istype(squad_leader.wear_ear, /obj/item/radio/headset/mainship/marine))
 		var/obj/item/radio/headset/mainship/marine/R = squad_leader.wear_ear

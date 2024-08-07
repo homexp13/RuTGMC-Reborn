@@ -101,7 +101,6 @@ RU TGMC EDIT */
 	results = list(/datum/reagent/medicine/dylovene = 3)
 	required_reagents = list(/datum/reagent/silicon = 1, /datum/reagent/potassium = 1, /datum/reagent/nitrogen = 1)
 
-
 /datum/chemical_reaction/tramadol
 	name = "Tramadol"
 	results = list(/datum/reagent/medicine/tramadol = 3)
@@ -112,11 +111,6 @@ RU TGMC EDIT */
 	results = list(/datum/reagent/medicine/paracetamol = 3)
 	required_reagents = list(/datum/reagent/medicine/tramadol = 1, /datum/reagent/consumable/sugar = 1, /datum/reagent/water = 1)
 
-/datum/chemical_reaction/oxycodone
-	name = "Oxycodone"
-	results = list(/datum/reagent/medicine/oxycodone = 1)
-	required_reagents = list(/datum/reagent/consumable/ethanol = 1, /datum/reagent/medicine/tramadol = 1)
-	required_catalysts = list(/datum/reagent/toxin/phoron = 1)
 
 /datum/chemical_reaction/synaptizine
 	name = "Synaptizine"
@@ -132,7 +126,7 @@ RU TGMC EDIT */
 /datum/chemical_reaction/hyronalin
 	name = "Hyronalin"
 	results = list(/datum/reagent/medicine/hyronalin = 2)
-	required_reagents = list(/datum/reagent/radium = 1, /datum/reagent/medicine/dylovene = 1, /datum/reagent/medicine/lemoline = 1)
+	required_reagents = list(/datum/reagent/radium = 1, /datum/reagent/medicine/dylovene = 1)
 
 /datum/chemical_reaction/arithrazine
 	name = "Arithrazine"
@@ -144,21 +138,11 @@ RU TGMC EDIT */
 	results = list(/datum/reagent/medicine/kelotane = 2)
 	required_reagents = list(/datum/reagent/silicon = 1, /datum/reagent/carbon = 1)
 
-/datum/chemical_reaction/peridaxon_plus
-	name = "Peridaxon Plus"
-	results = list(/datum/reagent/medicine/peridaxon_plus = 1)
-	required_reagents = list(/datum/reagent/medicine/hyronalin = 5, /datum/reagent/toxin/phoron = 5) //RU TGMC EDIT
-
 /datum/chemical_reaction/quickclot
 	name = "Quick-Clot"
-	results = list(/datum/reagent/medicine/quickclot = 1)
-	required_reagents = list(/datum/reagent/medicine/kelotane = 2, /datum/reagent/medicine/clonexadone = 2)
+	results = list(/datum/reagent/medicine/quickclot = 2)
+	required_reagents = list(/datum/reagent/medicine/kelotane = 2, /datum/reagent/medicine/clonexadone = 2, /datum/reagent/medicine/lemoline = 2)
 	required_catalysts = list(/datum/reagent/toxin/phoron = 5)
-
-/datum/chemical_reaction/quickclotplus
-	name = "Quick-Clot Plus"
-	results = list(/datum/reagent/medicine/quickclotplus = 1)
-	required_reagents = list(/datum/reagent/medicine/quickclot = 2, /datum/reagent/medicine/lemoline = 2, /datum/reagent/iron = 2)
 
 /datum/chemical_reaction/hypervene //New purge chem.
 	name = "Hypervene"
@@ -197,6 +181,11 @@ RU TGMC EDIT */
 	results = list(/datum/reagent/medicine/dylovene = 2)
 	required_reagents = list(/datum/reagent/virilyth = 1, /datum/reagent/medicine/dylovene = 1)
 
+/datum/chemical_reaction/dupl_tricordrazine
+	name = "Duplicate Tricordrazine"
+	results = list(/datum/reagent/medicine/tricordrazine = 2)
+	required_reagents = list(/datum/reagent/virilyth = 1, /datum/reagent/medicine/tricordrazine = 1)
+
 /datum/chemical_reaction/bihexajuline
 	name = "Bihexajuline"
 	results = list(/datum/reagent/medicine/bihexajuline = 5)
@@ -210,14 +199,14 @@ RU TGMC EDIT */
 /datum/chemical_reaction/somolent
 	name = "Somolent"
 	results = list(/datum/reagent/medicine/research/somolent = 4)
-	required_reagents = list(/datum/reagent/toxin/sleeptoxin = 1, /datum/reagent/medicine/tricordrazine = 1, /datum/reagent/consumable/drink/doctor_delight = 1, /datum/reagent/medicine/paracetamol = 1)
+	required_reagents = list(/datum/reagent/toxin/sleeptoxin = 1, /datum/reagent/medicine/tricordrazine = 1, /datum/reagent/medicine/doctor_delight = 1, /datum/reagent/medicine/paracetamol = 1)
 	required_catalysts = list(/datum/reagent/medicine/lemoline = 5)
 
 /datum/chemical_reaction/medicalnanites
 	name = "Medical Nanites"
-	results = list(/datum/reagent/medicine/research/medicalnanites = 9)
+	results = list(/datum/reagent/medicalnanites = 9)
 	required_reagents = list(/datum/reagent/iron = 10, /datum/reagent/medicine/lemoline = 1)
-	required_catalysts = list(/datum/reagent/medicine/research/medicalnanites = 1)
+	required_catalysts = list(/datum/reagent/medicalnanites = 1)
 
 /datum/chemical_reaction/stimulum
 	name = "Stimulum"

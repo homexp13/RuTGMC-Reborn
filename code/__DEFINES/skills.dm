@@ -22,7 +22,12 @@
 #define SKILL_POWERLOADER "powerloader"
 #define SKILL_LARGE_VEHICLE "large_vehicle"
 #define SKILL_STAMINA "stamina"
+#define SKILL_SWORDPLAY "swordplay"
 ////////////////////////////////////////////////
+
+//ability to use elegant melee weapons (i.e. rapiers)
+#define SKILL_SWORDPLAY_DEFAULT 0
+#define SKILL_SWORDPLAY_TRAINED 1
 
 //firearms skill (general knowledge of guns) (hidden skill)
 //increase or decrase accuracy, recoil, and firing delay of rifles and smgs.
@@ -149,8 +154,10 @@
 #define SKILL_PILOT_TRAINED 1 //Pilot
 
 //multitile and mech vehicle skills
-#define SKILL_LARGE_VEHICLE_DEFAULT 0
-#define SKILL_LARGE_VEHICLE_TRAINED 1
+#define SKILL_LARGE_VEHICLE_DEFAULT 0 //nothing
+#define SKILL_LARGE_VEHICLE_TRAINED 1 //loader
+#define SKILL_LARGE_VEHICLE_EXPERIENCED 2 //transport crew
+#define SKILL_LARGE_VEHICLE_VETERAN 3 //mech pilot and assault crew
 
 //stamina skill - you do cardio, right?
 //buff stamina related things

@@ -7,6 +7,8 @@
 	coverage = 25
 	light_system = STATIC_LIGHT
 	light_power = SQRTWO
+	max_integrity = 250
+	resistance_flags = XENO_DAMAGEABLE
 	///The brightness of the floodlight
 	var/brightness_on = 8
 
@@ -125,6 +127,7 @@
 	turn_light(user, !light_on)
 
 /obj/machinery/deployable/floodlight/update_icon_state()
+	. = ..()
 	icon_state = "floodlightcombat_deployed" + (light_on ? "_on" : "_off")
 
 /obj/item/deployable_floodlight
@@ -177,7 +180,7 @@
 	update_icon()
 
 
-/obj/machinery/floodlight/colony/update_icon()
+/obj/machinery/floodlight/colony/update_icon_state()
 	. = ..()
 	if(light_on)
 		icon_state = "floodon"
@@ -199,7 +202,7 @@
 	resistance_flags = RESIST_ALL
 	var/turned_on = FALSE //has to be toggled in engineering
 
-/obj/machinery/colony_floodlight_switch/update_icon()
+/obj/machinery/colony_floodlight_switch/update_icon_state()
 	. = ..()
 	if(machine_stat & NOPOWER)
 		icon_state = "panelnopower"

@@ -66,20 +66,25 @@
 
 	process_growth()
 
-//RUTGMC EDIT BEGIN - Moved to modular_RUtgmc\code\modules\mob\living\carbon\xenomorph\embryo.dm
-/*/obj/item/alien_embryo/proc/process_growth()
+
+/obj/item/alien_embryo/proc/process_growth()
+	if(CHECK_BITFIELD(affected_mob.restrained_flags, RESTRAINED_XENO_NEST)) //Hosts who are nested in resin nests provide an ideal setting, larva grows faster.
+		counter += 1 + max(0, (0.03 * affected_mob.health)) //Up to +300% faster, depending on the health of the host.
 
 	if(stage <= 4)
-		counter += 2.5 //Free burst time in ~7/8 min.
+		counter += 4 //Free burst time in ~5 min.
 
 	if(affected_mob.reagents.get_reagent_amount(/datum/reagent/consumable/larvajelly))
 		counter += 10 //Accelerates larval growth massively. Voluntarily drinking larval jelly while infected is straight-up suicide. Larva hits Stage 5 in exactly ONE minute.
 
 	if(affected_mob.reagents.get_reagent_amount(/datum/reagent/medicine/larvaway))
-		counter -= 1 //Halves larval growth progress, for some tradeoffs. Larval toxin purges this
+		counter -= 3 //Halves larval growth progress, for some tradeoffs. Larval toxin purges this
+
+	if(affected_mob.reagents.get_reagent_amount(/datum/reagent/medicine/spaceacillin))
+		counter -= 1
 
 	if(boost_timer)
-		counter += 2.5 //Doubles larval growth progress. Burst time in ~4 min.
+		counter += 2.5 //Doubles larval growth progress. Burst time in ~3 min.
 		adjust_boost_timer(-1)
 
 	if(stage < 5 && counter >= 120)
@@ -120,8 +125,6 @@
 			if(!larva_autoburst_countdown)
 				var/mob/living/carbon/xenomorph/larva/L = locate() in affected_mob
 				L?.initiate_burst(affected_mob)
-*/ //RUTGMC EDIT END
-
 
 //We look for a candidate. If found, we spawn the candidate as a larva.
 //Order of priority is bursted individual (if xeno is enabled), then random candidate, and then it's up for grabs and spawns braindead.
@@ -159,7 +162,7 @@
 	if(picked)
 		picked.mind.transfer_to(new_xeno, TRUE)
 		to_chat(new_xeno, span_xenoannounce("We are a xenomorph larva inside a host! Move to burst out of it!"))
-		new_xeno << sound('sound/effects/xeno_newlarva.ogg')
+		new_xeno << sound('sound/effects/alien/newlarva.ogg')
 
 	stage = 6
 
@@ -181,6 +184,15 @@
 
 	addtimer(CALLBACK(src, PROC_REF(burst), victim), 3 SECONDS)
 
+	var/nestburst_message = pick("You feel hive's psychic power getting stronger, after host [victim.name] gave birth on a nest!", "You feel hive's psychic power getting stronger, after breeding host [victim.name] on a nest!")
+	if(CHECK_BITFIELD(victim.restrained_flags, RESTRAINED_XENO_NEST))
+		if(victim.job == null)
+			SSpoints.add_psy_points(hivenumber, 10)
+		else if(victim.job.type == /datum/job/survivor/rambo)
+			SSpoints.add_psy_points(hivenumber, 50)
+		else
+			SSpoints.add_psy_points(hivenumber, 200)
+		xeno_message(nestburst_message, "xenoannounce", 5, hivenumber)
 
 /mob/living/carbon/xenomorph/larva/proc/burst(mob/living/carbon/victim)
 	if(QDELETED(victim))
@@ -192,12 +204,12 @@
 
 	victim.update_burst()
 
-	if(istype(victim.loc, /obj/vehicle/multitile/root))
-		var/obj/vehicle/multitile/root/V = victim.loc
-		V.handle_player_exit(src)
+	if(istype(victim.loc, /obj/vehicle/sealed))
+		var/obj/vehicle/sealed/armored/veh = victim.loc
+		forceMove(veh.exit_location(src))
 	else
 		forceMove(get_turf(victim)) //moved to the turf directly so we don't get stuck inside a cryopod or another mob container.
-	playsound(src, pick('sound/voice/alien_chestburst.ogg','sound/voice/alien_chestburst2.ogg'), 25)
+	playsound(src, pick('sound/voice/alien/chestburst.ogg','sound/voice/alien/chestburst2.ogg'), 25)
 	GLOB.round_statistics.total_larva_burst++
 	SSblackbox.record_feedback("tally", "round_statistics", 1, "total_larva_burst")
 	var/obj/item/alien_embryo/AE = locate() in victim
@@ -209,12 +221,11 @@
 		var/mob/living/carbon/human/H = victim
 		H.apply_damage(200, BRUTE, H.get_limb("chest"), updating_health = TRUE) //lethal armor ignoring brute damage
 		var/datum/internal_organ/O
-		for(var/i in list("heart", "lungs", "liver", "kidneys", "appendix")) //Bruise all torso internal organs
-			O = H.internal_organs_by_name[i]
+		for(var/i in list(ORGAN_SLOT_HEART, ORGAN_SLOT_LUNGS, ORGAN_SLOT_LIVER, ORGAN_SLOT_KIDNEYS, ORGAN_SLOT_APPENDIX)) //Bruise all torso internal organs
+			O = H.get_organ_slot(i)
 
 			if(!H.mind && !H.client) //If we have no client or mind, permadeath time; remove the organs. Mainly for the NPC colonist bodies
-				H.internal_organs_by_name -= i
-				H.internal_organs -= O
+				H.remove_organ_slot(O)
 			else
 				O.take_damage(O.min_bruised_damage, TRUE)
 

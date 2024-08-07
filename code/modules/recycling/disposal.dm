@@ -13,6 +13,8 @@
 	icon_state = "disposal"
 	anchored = TRUE
 	density = TRUE
+	resistance_flags = XENO_DAMAGEABLE
+	max_integrity = 150
 	active_power_usage = 3500 //The pneumatic pump power. 3 HP ~ 2200W
 	idle_power_usage = 100
 	allow_pass_flags = PASS_LOW_STRUCTURE|PASSABLE
@@ -159,17 +161,17 @@
 	if(target == user)
 		visible_message(span_notice("[user] starts climbing into the disposal."))
 	else
-		visible_message("<span class ='warning'>[user] starts stuffing [target] into the disposal.</span>")
+		visible_message(span_warning("[user] starts stuffing [target] into the disposal."))
 
 	if(!do_after(user, 4 SECONDS, IGNORE_HELD_ITEM, target, BUSY_ICON_HOSTILE))
 		return
 
 	if(target == user)
 		user.visible_message(span_notice("[user] climbs into [src]."),
-		"<span class ='notice'>You climb into [src].</span>")
+		span_notice("You climb into [src]."))
 	else
-		user.visible_message("<span class ='danger'>[user] stuffs [target] into [src]!</span>",
-		"<span class ='warning'>You stuff [target] into [src]!</span>")
+		user.visible_message(span_danger("[user] stuffs [target] into [src]!"),
+		span_warning("You stuff [target] into [src]!"))
 
 		log_combat(user, target, "placed", addition="into disposals")
 		message_admins("[ADMIN_TPMONTY(usr)] placed [ADMIN_TPMONTY(target)] in a disposals unit.")
@@ -199,8 +201,8 @@
 		var/mob/living/L = user
 		L.Stun(4 SECONDS)
 	if(!user.lying_angle)
-		user.visible_message("<span class='warning'>[user] suddenly climbs out of [src]!",
-		"<span class='warning'>You climb out of [src] and get your bearings!")
+		user.visible_message(span_warning("[user] suddenly climbs out of [src]!"),
+		span_warning("You climb out of [src] and get your bearings!"))
 		update()
 
 
@@ -280,8 +282,8 @@
 		if(isliving(AM))
 			var/mob/M = AM
 			if(!M.lying_angle)
-				M.visible_message("<span class='warning'>[M] is suddenly pushed out of [src]!",
-				"<span class='warning'>You get pushed out of [src] and get your bearings!")
+				M.visible_message(span_warning("[M] is suddenly pushed out of [src]!"),
+				span_warning("You get pushed out of [src] and get your bearings!"))
 			if(isliving(M))
 				var/mob/living/L = M
 				L.Stun(4 SECONDS)
@@ -289,15 +291,8 @@
 
 //Pipe affected by explosion
 /obj/machinery/disposal/ex_act(severity)
-	switch(severity)
-		if(EXPLODE_DEVASTATE)
-			qdel(src)
-		if(EXPLODE_HEAVY)
-			if(prob(60))
-				qdel(src)
-		if(EXPLODE_LIGHT)
-			if(prob(25))
-				qdel(src)
+	if(prob(severity / 4))
+		qdel(src)
 
 //Update the icon & overlays to reflect mode & status
 /obj/machinery/disposal/proc/update()
@@ -691,13 +686,9 @@
 
 //Pipe affected by explosion
 /obj/structure/disposalpipe/ex_act(severity)
-	switch(severity)
-		if(EXPLODE_DEVASTATE)
-			qdel(src)
-		if(EXPLODE_HEAVY)
-			take_damage(rand(5, 15), BRUTE, BOMB)
-		if(EXPLODE_LIGHT)
-			take_damage(rand(0, 15), BRUTE, BOMB)
+	if(CHECK_BITFIELD(resistance_flags, INDESTRUCTIBLE))
+		return
+	take_damage(severity / 15, BRUTE, BOMB)
 
 //Attack by item. Weldingtool: unfasten and convert to obj/disposalconstruct
 /obj/structure/disposalpipe/attackby(obj/item/I, mob/user, params)
